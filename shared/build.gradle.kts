@@ -23,7 +23,14 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation(config.Libs.Core.redux)
+                implementation(config.Libs.Core.coroutines)
+                implementation(config.Libs.KodeinDb.kodein_db)
+                implementation(config.Libs.KodeinDb.kotlin_serializer)
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
