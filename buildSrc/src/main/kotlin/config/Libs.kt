@@ -3,6 +3,7 @@ package config
 
 object Libs {
 
+    const val kotlin_version = "1.6.10"
     const val koin_version = "3.2.0-beta-1"
     const val kodein_db_version = "0.8.1-beta"
     const val redux_version = "0.5.5"
@@ -69,5 +70,8 @@ object Libs {
 
         // UI Tests
         const val ui_tests = "androidx.compose.ui:ui-test-junit4:$compose_version"
+
+        const val activity = "androidx.activity:activity-compose:1.4.0"
+        const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
     }
 }

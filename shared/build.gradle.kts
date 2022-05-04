@@ -2,6 +2,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
+    kotlin("plugin.serialization") version "1.5.0"
 }
 
 version = "1.0"
@@ -25,10 +26,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(config.Libs.Core.redux)
-                implementation(config.Libs.Core.coroutines)
-                implementation(config.Libs.KodeinDb.kodein_db)
-                implementation(config.Libs.KodeinDb.kotlin_serializer)
+                api(config.Libs.Core.redux)
+                api(config.Libs.Core.coroutines)
+                api(config.Libs.KodeinDb.kodein_db)
+                api(config.Libs.KodeinDb.kotlin_serializer)
+                api(config.Libs.Koin.koin)
             }
         }
         val commonTest by getting {

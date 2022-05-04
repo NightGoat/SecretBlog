@@ -12,20 +12,22 @@ import org.kodein.memory.util.UUID
 import ru.nightgoat.secretblog.models.BlogMessage
 import kotlin.properties.Delegates
 
-class MessagesDataBase : DataBase<BlogMessage>, DBListener<BlogMessage> {
+object MessagesDataBase : DataBase<BlogMessage>, DBListener<BlogMessage> {
 
-    private var db: DB by Delegates.notNull<DB>()
+    private const val DB_PATH = "db"
+
+    private var db: DB by Delegates.notNull()
 
     private val stateFlow = MutableStateFlow(0)
 
-    override val flow = flow<Sequence<BlogMessage>> {
+    override val flow = flow {
         stateFlow.map {
             emit(getAll())
         }
     }
 
-    init {
-        db = DB.open(DB_PATH)
+    fun init(path: String) {
+        db = DB.open(path)
         db.on<BlogMessage>().register(this)
     }
 
@@ -64,9 +66,7 @@ class MessagesDataBase : DataBase<BlogMessage>, DBListener<BlogMessage> {
         stateFlow.value += 1
     }
 
-    companion object {
-        const val DB_PATH = "db"
-    }
+
 }
 
 interface DataBase<T : Entity> {
