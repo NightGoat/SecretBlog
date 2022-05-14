@@ -2,8 +2,6 @@ package ru.nightgoat.secretblog.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import org.kodein.db.*
 import org.kodein.db.impl.open
 import org.kodein.db.model.orm.Metadata
@@ -14,33 +12,26 @@ import kotlin.properties.Delegates
 
 object MessagesDataBase : DataBase<BlogMessage>, DBListener<BlogMessage> {
 
-    private const val DB_PATH = "db"
-
     private var db: DB by Delegates.notNull()
 
-    private val stateFlow = MutableStateFlow(0)
+    override val flow = MutableStateFlow(emptySequence<BlogMessage>())
 
-    override val flow = flow {
-        stateFlow.map {
-            emit(getAll())
-        }
-    }
-
-    fun init(path: String) {
+    override suspend fun init(path: String) {
         db = DB.open(path)
         db.on<BlogMessage>().register(this)
+        flow.value = getAll()
     }
 
-    override fun add(message: BlogMessage) {
+    override suspend fun add(message: BlogMessage) {
         db.put(message)
     }
 
-    override fun delete(id: UUID) {
+    override suspend fun delete(id: UUID) {
         db.deleteById<BlogMessage>(id)
     }
 
-    override fun getAll(): Sequence<BlogMessage> {
-        return db.find<BlogMessage>().all().asModelSequence()
+    override suspend fun getAll(): Sequence<BlogMessage> {
+        return db.find(BlogMessage::class).all().asModelSequence()
     }
 
 
@@ -53,7 +44,7 @@ object MessagesDataBase : DataBase<BlogMessage>, DBListener<BlogMessage> {
         options: Array<out Options.Puts>
     ) {
         super.didPut(model, key, typeName, metadata, size, options)
-        stateFlow.value += 1
+        flow.value += model
     }
 
     override fun didDelete(
@@ -63,7 +54,9 @@ object MessagesDataBase : DataBase<BlogMessage>, DBListener<BlogMessage> {
         options: Array<out Options.Deletes>
     ) {
         super.didDelete(key, model, typeName, options)
-        stateFlow.value += 1
+        model?.let {
+            flow.value -= model
+        }
     }
 
 
@@ -71,7 +64,8 @@ object MessagesDataBase : DataBase<BlogMessage>, DBListener<BlogMessage> {
 
 interface DataBase<T : Entity> {
     val flow: Flow<Sequence<T>>
-    fun add(message: T)
-    fun delete(id: UUID)
-    fun getAll(): Sequence<T>
+    suspend fun init(path: String)
+    suspend fun add(message: T)
+    suspend fun delete(id: UUID)
+    suspend fun getAll(): Sequence<T>
 }

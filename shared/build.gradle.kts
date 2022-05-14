@@ -26,7 +26,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(config.Libs.Core.redux)
                 api(config.Libs.Core.coroutines)
                 api(config.Libs.KodeinDb.kodein_db)
                 api(config.Libs.KodeinDb.kotlin_serializer)
