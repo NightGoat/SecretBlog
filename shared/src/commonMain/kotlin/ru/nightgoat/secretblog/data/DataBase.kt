@@ -1,71 +1,63 @@
 package ru.nightgoat.secretblog.data
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.kodein.db.*
+import kotlinx.coroutines.withContext
+import org.kodein.db.DB
+import org.kodein.db.asModelSequence
+import org.kodein.db.deleteAll
+import org.kodein.db.deleteById
 import org.kodein.db.impl.open
-import org.kodein.db.model.orm.Metadata
-import org.kodein.memory.io.ReadMemory
-import org.kodein.memory.util.UUID
 import ru.nightgoat.secretblog.models.BlogMessage
 import kotlin.properties.Delegates
 
-object MessagesDataBase : DataBase<BlogMessage>, DBListener<BlogMessage> {
+object MessagesDataBase : DataBase<BlogMessage> {
 
     private var db: DB by Delegates.notNull()
 
-    override val flow = MutableStateFlow(emptySequence<BlogMessage>())
+    override val flow = MutableStateFlow(emptyList<BlogMessage>())
 
     override suspend fun init(path: String) {
         db = DB.open(path)
-        db.on<BlogMessage>().register(this)
-        flow.value = getAll()
+        flow.value = getAll().toList()
     }
 
-    override suspend fun add(message: BlogMessage) {
-        db.put(message)
-    }
-
-    override suspend fun delete(id: UUID) {
-        db.deleteById<BlogMessage>(id)
-    }
-
-    override suspend fun getAll(): Sequence<BlogMessage> {
-        return db.find(BlogMessage::class).all().asModelSequence()
-    }
-
-
-    override fun didPut(
-        model: BlogMessage,
-        key: Key<BlogMessage>,
-        typeName: ReadMemory,
-        metadata: Metadata,
-        size: Int,
-        options: Array<out Options.Puts>
-    ) {
-        super.didPut(model, key, typeName, metadata, size, options)
-        flow.value += model
-    }
-
-    override fun didDelete(
-        key: Key<BlogMessage>,
-        model: BlogMessage?,
-        typeName: ReadMemory,
-        options: Array<out Options.Deletes>
-    ) {
-        super.didDelete(key, model, typeName, options)
-        model?.let {
-            flow.value -= model
+    override suspend fun add(entity: BlogMessage) {
+        withContext(Dispatchers.Default) {
+            val oldFlow = flow.value
+            flow.value = oldFlow + entity
+            db.put(entity)
         }
     }
 
+    override suspend fun delete(entity: BlogMessage) {
+        withContext(Dispatchers.Default) {
+            val oldFlow = flow.value
+            flow.value = oldFlow - entity
+            db.deleteById<BlogMessage>(entity.id)
+        }
+    }
 
+    override suspend fun getAll(): List<BlogMessage> {
+        return withContext(Dispatchers.Default) {
+            db.find(BlogMessage::class).all().asModelSequence().toList()
+        }
+    }
+
+    override suspend fun deleteAll() {
+        withContext(Dispatchers.Default) {
+            db.deleteAll(db.find(BlogMessage::class).all())
+            flow.value = emptyList()
+        }
+    }
 }
 
 interface DataBase<T : Entity> {
-    val flow: Flow<Sequence<T>>
+    val flow: Flow<List<T>>
     suspend fun init(path: String)
-    suspend fun add(message: T)
-    suspend fun delete(id: UUID)
-    suspend fun getAll(): Sequence<T>
+    suspend fun add(entity: T)
+    suspend fun delete(entity: T)
+    suspend fun getAll(): List<T>
+    suspend fun deleteAll()
 }

@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import org.kodein.memory.util.UUID
 import org.koin.core.component.KoinComponent
 import ru.nightgoat.secretblog.data.DataBase
 import ru.nightgoat.secretblog.models.BlogMessage
@@ -16,7 +15,7 @@ class StoreViewModel(
 
     private val state = MutableStateFlow(AppState())
     private val sideEffect = MutableSharedFlow<BlogEffect>()
-    private val messages = dataBase.flow.stateIn(this, SharingStarted.Eagerly, emptySequence())
+    private val messages = dataBase.flow.stateIn(this, SharingStarted.Eagerly, emptyList())
 
     fun addMessage(message: String, isSecret: Boolean = false) {
         message.takeIf { it.isNotEmpty() }?.let { newMessage ->
@@ -35,15 +34,17 @@ class StoreViewModel(
 
     override fun dispatch(action: BlogAction) {
         val oldState = state.value
-        var newState = oldState
         when (action) {
             is BlogAction.Start -> {
                 launch {
-                    state.value = oldState.copy(blogMessages = dataBase.getAll().toList())
+                    val newMessages = dataBase.getAll()
+                    state.value = oldState.copy(blogMessages = newMessages)
+                    sideEffect.emit(BlogEffect.ScrollToLastElement)
                 }
             }
             is BlogAction.Refresh -> {
-                newState = oldState.stateWithNewMessages()
+                state.value = oldState.stateWithNewMessages()
+                sideEffect.tryEmit(BlogEffect.ScrollToLastElement)
             }
             is BlogAction.AddMessage -> {
                 launch {
@@ -54,25 +55,38 @@ class StoreViewModel(
                     addMessage(newMessage)
                 }
             }
+            is BlogAction.ClearDB -> {
+                launch {
+                    dataBase.deleteAll()
+                    refresh()
+                }
+            }
             is BlogAction.RemoveMessage -> {
                 launch {
-                    deleteMessage(action.message.id)
+                    deleteMessage(action.message)
                 }
             }
             is BlogAction.ReverseSecretBlogsVisibility -> {
-                newState = oldState.reversedVisibilty
+                state.value = oldState.reversedVisibilty
             }
         }
-        state.value = newState
     }
 
-    private suspend fun deleteMessage(messageId: UUID) {
-        dataBase.delete(messageId)
-        dispatch(BlogAction.Refresh)
+    private suspend fun deleteMessage(message: BlogMessage) {
+        dataBase.delete(message)
+        refresh()
     }
 
     private suspend fun addMessage(message: BlogMessage) {
         dataBase.add(message)
+        refresh()
+    }
+
+    fun clearDB() {
+        dispatch(BlogAction.ClearDB)
+    }
+
+    private fun refresh() {
         dispatch(BlogAction.Refresh)
     }
 

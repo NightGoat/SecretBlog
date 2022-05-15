@@ -8,4 +8,5 @@ sealed class BlogAction : Action {
     object Refresh : BlogAction()
     object Start : BlogAction()
     object ReverseSecretBlogsVisibility : BlogAction()
+    object ClearDB : BlogAction()
 }
