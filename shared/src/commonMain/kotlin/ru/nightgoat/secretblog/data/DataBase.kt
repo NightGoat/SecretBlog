@@ -41,7 +41,9 @@ object MessagesDataBase : DataBase<BlogMessage> {
 
     override suspend fun getAll(): List<BlogMessage> {
         return withContext(Dispatchers.Default) {
-            db.find(BlogMessage::class).all().asModelSequence().toList()
+            db.find(BlogMessage::class).all().asModelSequence().sortedByDescending {
+                it.time
+            }.toList()
         }
     }
 

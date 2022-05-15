@@ -92,22 +92,26 @@ fun MainContent(
 fun Toolbar(
     onClearButtonClick: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .background(Color.White)
-            .fillMaxWidth()
-            .padding(8.dp),
-        verticalAlignment = CenterVertically
+    Surface(
+        elevation = 4.dp,
+        color = Color.White
     ) {
-        Text(
-            modifier = Modifier.weight(1f),
-            fontSize = 24.sp,
-            text = "Secret blog"
-        )
-        Button(onClick = {
-            onClearButtonClick()
-        }) {
-            Text("Clear")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                fontSize = 20.sp,
+                text = "Secret blog"
+            )
+            Button(onClick = {
+                onClearButtonClick()
+            }) {
+                Text("Clear")
+            }
         }
     }
 }
@@ -124,11 +128,24 @@ fun Messages(
         horizontalAlignment = Alignment.End
     ) {
         items(state.visibleMessages) { message ->
-            Card(modifier = Modifier.padding(8.dp)) {
-                Text(
+            Card(
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Column(
                     modifier = Modifier.padding(8.dp),
-                    text = message.text
-                )
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(
+                        text = message.timeFormatted,
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                    Spacer(modifier = Modifier.size(4.dp))
+                    Text(
+                        text = message.text,
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
     }

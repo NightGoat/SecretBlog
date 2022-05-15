@@ -30,6 +30,7 @@ kotlin {
                 api(config.Libs.KodeinDb.kodein_db)
                 api(config.Libs.KodeinDb.kotlin_serializer)
                 api(config.Libs.Koin.koin)
+                implementation(config.Libs.Core.date_time)
             }
         }
         val commonTest by getting {
