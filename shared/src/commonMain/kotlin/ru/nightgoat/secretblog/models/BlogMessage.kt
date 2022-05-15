@@ -15,6 +15,7 @@ data class BlogMessage(
     val text: String = "",
     val time: Instant = Clock.System.now(),
     val isSecret: Boolean = false,
+    val isSelected: Boolean = false,
 ) : Metadata, Entity {
 
     val timeFormatted = time.toLocalDateTime(TimeZone.currentSystemDefault()).run {

@@ -61,13 +61,29 @@ class StoreViewModel(
                     refresh()
                 }
             }
-            is BlogAction.RemoveMessage -> {
+            is BlogAction.RemoveMessages -> {
                 launch {
-                    deleteMessage(action.message)
+                    action.messages.forEach { message ->
+                        deleteMessage(message)
+                    }
                 }
             }
             is BlogAction.ReverseSecretBlogsVisibility -> {
-                state.value = oldState.reversedVisibilty
+                state.value = oldState.reversedVisibility
+            }
+            is BlogAction.ReverseEditMode -> {
+                state.value = oldState.reversedEdit
+            }
+            is BlogAction.SelectMessage -> {
+                state.value = oldState.copy(
+                    blogMessages = oldState.blogMessages.map { message ->
+                        if (message.id == action.message.id) {
+                            message.copy(isSelected = action.isSelected)
+                        } else {
+                            message
+                        }
+                    }
+                )
             }
         }
     }
@@ -88,6 +104,23 @@ class StoreViewModel(
 
     private fun refresh() {
         dispatch(BlogAction.Refresh)
+    }
+
+    fun reverseVisibility() {
+        dispatch(BlogAction.ReverseSecretBlogsVisibility)
+    }
+
+    fun reverseEditMode() {
+        dispatch(BlogAction.ReverseEditMode)
+    }
+
+    fun onMessageSelected(message: BlogMessage, isSelected: Boolean) {
+        dispatch(BlogAction.SelectMessage(message, isSelected))
+    }
+
+    fun deleteSelectedMessages() {
+        dispatch(BlogAction.RemoveMessages(state.value.visibleMessages.filter { it.isSelected }))
+        dispatch(BlogAction.ReverseEditMode)
     }
 
     private fun AppState.stateWithNewMessages() = this.copy(blogMessages = messages.value.toList())

@@ -7,7 +7,6 @@ import kotlinx.coroutines.withContext
 import org.kodein.db.DB
 import org.kodein.db.asModelSequence
 import org.kodein.db.deleteAll
-import org.kodein.db.deleteById
 import org.kodein.db.impl.open
 import ru.nightgoat.secretblog.models.BlogMessage
 import kotlin.properties.Delegates
@@ -34,14 +33,21 @@ object MessagesDataBase : DataBase<BlogMessage> {
     override suspend fun delete(entity: BlogMessage) {
         withContext(Dispatchers.Default) {
             val oldFlow = flow.value
-            flow.value = oldFlow - entity
-            db.deleteById<BlogMessage>(entity.id)
+            flow.value = oldFlow.mapNotNull {
+                if (it.id == entity.id) {
+                    null
+                } else {
+                    it
+                }
+            }
+            val key = db.keyById(BlogMessage::class, entity.id)
+            db.delete(BlogMessage::class, key)
         }
     }
 
     override suspend fun getAll(): List<BlogMessage> {
         return withContext(Dispatchers.Default) {
-            db.find(BlogMessage::class).all().asModelSequence().sortedByDescending {
+            db.find(BlogMessage::class).all().asModelSequence().sortedBy {
                 it.time
             }.toList()
         }

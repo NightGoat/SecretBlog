@@ -5,6 +5,7 @@
     <application
         android:allowBackup="false"
         android:supportsRtl="true"
+        android:label="@string/app_name"
         android:name=".BlogApp"
         android:theme="@style/AppTheme">
         <activity
