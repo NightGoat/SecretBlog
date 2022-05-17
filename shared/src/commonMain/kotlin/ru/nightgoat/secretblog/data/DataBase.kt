@@ -17,7 +17,8 @@ object MessagesDataBase : DataBase<BlogMessage> {
 
     override val flow = MutableStateFlow(emptyList<BlogMessage>())
 
-    override suspend fun init(path: String) {
+    override suspend fun init() {
+        val path = DbPathProvider().provideDbPath()
         db = DB.open(path)
         flow.value = getAll().toList()
     }
@@ -63,7 +64,7 @@ object MessagesDataBase : DataBase<BlogMessage> {
 
 interface DataBase<T : Entity> {
     val flow: Flow<List<T>>
-    suspend fun init(path: String)
+    suspend fun init()
     suspend fun add(entity: T)
     suspend fun delete(entity: T)
     suspend fun getAll(): List<T>

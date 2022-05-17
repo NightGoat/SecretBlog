@@ -5,17 +5,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import ru.nightgoat.secretblog.data.DataBase
 import ru.nightgoat.secretblog.models.BlogMessage
 
-class StoreViewModel(
-    private val dataBase: DataBase<BlogMessage>
-) : KoinComponent, CoroutineScope by CoroutineScope(Dispatchers.Main),
+class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatchers.Main),
     Store<AppState, BlogAction, BlogEffect> {
+
+    private val dataBase: DataBase<BlogMessage> by inject()
 
     private val state = MutableStateFlow(AppState())
     private val sideEffect = MutableSharedFlow<BlogEffect>()
     private val messages = dataBase.flow.stateIn(this, SharingStarted.Eagerly, emptyList())
+
+    init {
+        launch {
+            dataBase.init()
+        }
+    }
 
     fun addMessage(message: String, isSecret: Boolean = false) {
         message.takeIf { it.isNotEmpty() }?.let { newMessage ->
