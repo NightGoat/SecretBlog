@@ -2,7 +2,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
-    kotlin("plugin.serialization") version "1.5.0"
+    id("io.realm.kotlin")
 }
 
 version = "1.0"
@@ -27,10 +27,9 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(config.Libs.Core.coroutines)
-                api(config.Libs.KodeinDb.kodein_db)
-                api(config.Libs.KodeinDb.kotlin_serializer)
-                api(config.Libs.Koin.koin)
+                implementation(config.Libs.Koin.koin)
                 implementation(config.Libs.Core.date_time)
+                api("io.realm.kotlin:library-base:0.11.1")
             }
         }
         val commonTest by getting {
@@ -59,6 +58,18 @@ kotlin {
             iosSimulatorArm64Test.dependsOn(this)
         }
     }
+
+//    kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
+//        binaries.all {
+//            binaryOptions["memoryModel"] = "experimental"
+//        }
+//    }
+//
+//    kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
+//        binaries.all {
+//            freeCompilerArgs += "-Xruntime-logs=gc=info"
+//        }
+//    }
 }
 
 android {

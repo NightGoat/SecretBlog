@@ -30,6 +30,10 @@ struct ContentView: View {
                     value.scrollTo(text)
                 }
             }
+        }.onReceive(store.$state) { value in
+            self.messages = value.visibleMessages.map { message in
+                message.text
+            }
         }
     }
 
@@ -39,6 +43,7 @@ struct ContentView: View {
             TextField("Message...", text: $text)
             Button(action: {
                 messages.append(text)
+                text = ""
             }, label: {
                 Image(systemName: "paperplane.fill")
             })

@@ -12,11 +12,12 @@ import ru.nightgoat.secretblog.models.BlogMessage
 class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatchers.Main),
     Store<AppState, BlogAction, BlogEffect> {
 
-    private val dataBase: DataBase<BlogMessage> by inject()
+    val dataBase: DataBase<BlogMessage> by inject()
 
-    private val state = MutableStateFlow(AppState())
-    private val sideEffect = MutableSharedFlow<BlogEffect>()
-    private val messages = dataBase.flow.stateIn(this, SharingStarted.Eagerly, emptyList())
+    private var state = MutableStateFlow(AppState())
+    private var sideEffect = MutableSharedFlow<BlogEffect>()
+    private var messages = dataBase.flow.stateIn(this, SharingStarted.Eagerly, emptyList())
+
 
     init {
         launch {
@@ -55,10 +56,10 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
             }
             is BlogAction.AddMessage -> {
                 launch {
-                    val newMessage = BlogMessage(
-                        text = action.message,
+                    val newMessage = BlogMessage().apply {
+                        text = action.message
                         isSecret = action.isSecret
-                    )
+                    }
                     addMessage(newMessage)
                 }
             }
@@ -96,12 +97,12 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
     }
 
     private suspend fun deleteMessage(message: BlogMessage) {
-        dataBase.delete(message)
+        dataBase?.delete(message)
         refresh()
     }
 
     private suspend fun addMessage(message: BlogMessage) {
-        dataBase.add(message)
+        dataBase?.add(message)
         refresh()
     }
 

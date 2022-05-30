@@ -8,5 +8,5 @@ import ru.nightgoat.secretblog.models.BlogMessage
 
 val dataModule = module {
     single { StoreViewModel() }
-    single { MessagesDataBase as DataBase<BlogMessage> }
+    single { MessagesDataBase() as DataBase<BlogMessage> }
 }

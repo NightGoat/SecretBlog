@@ -7,6 +7,7 @@ class iOSApp: App {
     let store: ObservableStore
     
     required init() {
+        KoinKt.doInitKoin()
         viewModel = StoreViewModel()
         store = ObservableStore(store: viewModel)
     }

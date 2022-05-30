@@ -279,11 +279,11 @@ private fun MessageCard(
             modifier = Modifier.padding(defaultPadding),
             horizontalAlignment = Alignment.End
         ) {
-            Text(
-                text = message.timeFormatted,
-                fontSize = 12.sp,
-                color = timeStampColor
-            )
+//            Text(
+//                text = message.timeFormatted,
+//                fontSize = 12.sp,
+//                color = timeStampColor
+//            )
             Spacer(modifier = Modifier.size(4.dp))
             Text(
                 text = message.text,
@@ -344,9 +344,7 @@ fun MainPreview() {
     MainContent(
         state = AppState(
             blogMessages = listOf(
-                BlogMessage(text = "Hello"),
-                BlogMessage(text = "World"),
-                BlogMessage(text = "YABADABADU", isSecret = true)
+                BlogMessage()
             ),
             secretBlogsState = SecretBlogsState.VISIBLE,
             isEdit = false
