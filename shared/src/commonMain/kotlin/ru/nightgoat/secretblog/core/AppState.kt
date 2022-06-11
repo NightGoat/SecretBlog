@@ -14,6 +14,9 @@ data class AppState(
             SecretBlogsState.VISIBLE -> blogMessages
         }
 
+    val visibleMessagesStrings
+        get() = visibleMessages.map { it.text }
+
     val reversedVisibility
         get() = this.copy(secretBlogsState = secretBlogsState.reverse())
 
