@@ -117,8 +117,10 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
     }
 
     private suspend fun addMessage(message: BlogMessage) {
-        dataBase.add(message)
-        refresh(RefreshAction.Add(message))
+        if (message.text.isNotEmpty()) {
+            dataBase.add(message)
+            refresh(RefreshAction.Add(message))
+        }
     }
 
     fun clearDB() {

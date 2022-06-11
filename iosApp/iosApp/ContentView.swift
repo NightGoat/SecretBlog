@@ -10,8 +10,9 @@ struct ContentView: ConnectedView {
         let onAddMessage: (String, Bool) -> Void
         let onReverseMessages: () -> Void
         let onSelectMessage: (BlogMessage, Bool) -> Void
+        let onClearMessages: () -> Void
+        let onDeleteMessage: ([BlogMessage]) -> Void
     }
-    
     
     func map(state: AppState, dispatch: @escaping DispatchFunction) -> Props {
         return Props(
@@ -24,9 +25,16 @@ struct ContentView: ConnectedView {
             },
             onReverseMessages: {
                 dispatch(BlogAction.ReverseSecretBlogsVisibility())
+                isSecretMessagesVisible = !isSecretMessagesVisible
             },
             onSelectMessage: { message, isSelected in
                 dispatch(BlogAction.SelectMessage(message: message, isSelected: isSelected))
+            },
+            onClearMessages: {
+                dispatch(BlogAction.ClearDB())
+            },
+            onDeleteMessage: { messages in
+                dispatch(BlogAction.RemoveMessages(messages: messages))
             })
     }
     
@@ -40,51 +48,76 @@ struct ContentView: ConnectedView {
                 textInputView(props: props)
             }
             .navigationTitle("Secret Blog")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     HStack {
-                        Button("Clear") {
-                            store.store.clearDB()
-                        }
-                        Button("Reverse") {
-                            store.store.reverseVisibility()
-                        }
+                        Button( action: {
+                            props.onClearMessages()
+                        }, label: {
+                            Image(systemName: "xmark.bin")
+                        })
+                        Button( action :{
+                            props.onReverseMessages()
+                        }, label: {
+                            Image(systemName: getEyeIcon())
+                        })
                     }
                 }
             }
         }
-        
+    }
+    
+    func getEyeIcon() -> String {
+        var label = "eye"
+        if isSecretMessagesVisible {
+            label = "eye.slash"
+        }
+        return label
     }
     
     func messagesView(props: Props) -> some View {
-        ScrollView {
-            ScrollViewReader { value in
+        ScrollViewReader { value in
+            ScrollView {
                 ForEach(props.items, id: \.self) { message in
                     Text(message.text)
                         .padding()
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(getColor(message: message), lineWidth: 2)
+                        .foregroundColor(getTextColor(message: message))
+                        .background(
+                            getMessageBackGroundColor(message: message)
                         )
+                        .cornerRadius(8)
                         .padding(EdgeInsets(top: 10, leading: 6, bottom: 0, trailing: 10))
                         .frame(maxWidth: .infinity, alignment: .trailing)
-                }.onChange(of: text) { _ in
-                    value.scrollTo(text)
+                        .id(message.id)
+                }.onChange(of: props.items) { _ in
+                    value.scrollTo(props.items.last?.id)
+                }.onAppear {
+                    value.scrollTo(props.items.last?.id)
                 }
             }
-        }.onAppear {
+        }
+        .background(Color(.sRGB, red: 150/255, green: 150/255, blue: 150/255, opacity: 0.1))
+        .onAppear {
             props.onStart()
         }
     }
     
-    func getColor(message: BlogMessage) -> Color {
-        var color = Color.blue
+    func getMessageBackGroundColor(message: BlogMessage) -> Color {
+        var color = Color.white
         if message.isSecret {
-            color = Color.red
+            color = Color.accentColor
         }
         return color
     }
     
+    func getTextColor(message: BlogMessage) -> Color {
+        var color = Color.black
+        if message.isSecret {
+            color = Color.white
+        }
+        return color
+    }
     
     func textInputView(props: Props) -> some View {
         HStack {
@@ -94,16 +127,15 @@ struct ContentView: ConnectedView {
                 text = ""
             }, label: {
                 Image(systemName: "paperplane.fill")
-            })
+            }).padding(4)
             Button(action: {
                 props.onAddMessage(text, false)
                 text = ""
             }, label: {
                 Image(systemName: "paperplane")
-            })
-        }.padding()
+            }).padding(4)
+        }.padding(EdgeInsets(top: 8, leading: 16, bottom: 2, trailing: 16))
     }
-    
 }
 
 struct ContentView_Previews: PreviewProvider {
