@@ -3,8 +3,6 @@ package ru.nightgoat.secretblog.data
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.query
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import ru.nightgoat.secretblog.models.BlogMessage
 
 class MessagesDataBase : DataBase<BlogMessage> {
@@ -16,17 +14,8 @@ class MessagesDataBase : DataBase<BlogMessage> {
         Realm.open(config)
     }
 
-    override val flow by lazy {
-        db.query<BlogMessage>().find().asFlow().map {
-            it.list
-        }
-    }
-
-    suspend fun getLastId(): Int {
+    private suspend fun getLastId(): Int {
         return getAll().lastOrNull()?.id ?: 0
-    }
-
-    override suspend fun init() {
     }
 
     override suspend fun add(entity: BlogMessage) {
@@ -58,8 +47,6 @@ class MessagesDataBase : DataBase<BlogMessage> {
 }
 
 interface DataBase<T : Entity> {
-    val flow: Flow<List<T>>
-    suspend fun init()
     suspend fun add(entity: T)
     suspend fun delete(entity: T)
     suspend fun getAll(): List<T>

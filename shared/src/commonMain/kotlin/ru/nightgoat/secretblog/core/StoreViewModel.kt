@@ -2,7 +2,10 @@ package ru.nightgoat.secretblog.core
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -12,18 +15,10 @@ import ru.nightgoat.secretblog.models.BlogMessage
 class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatchers.Main),
     Store<AppState, BlogAction, BlogEffect> {
 
-    val dataBase: DataBase<BlogMessage> by inject()
+    private val dataBase: DataBase<BlogMessage> by inject()
 
     private var state = MutableStateFlow(AppState())
     private var sideEffect = MutableSharedFlow<BlogEffect>()
-    private var messages = dataBase.flow.stateIn(this, SharingStarted.Eagerly, emptyList())
-
-
-    init {
-        launch {
-            dataBase.init()
-        }
-    }
 
     fun addMessage(message: String, isSecret: Boolean = false) {
         message.takeIf { it.isNotEmpty() }?.let { newMessage ->
@@ -51,8 +46,10 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
                 }
             }
             is BlogAction.Refresh -> {
-                state.value = oldState.stateWithNewMessages()
-                sideEffect.tryEmit(BlogEffect.ScrollToLastElement)
+                launch {
+                    state.value = reduceRefreshAction(action, oldState)
+                    sideEffect.tryEmit(BlogEffect.ScrollToLastElement)
+                }
             }
             is BlogAction.AddMessage -> {
                 launch {
@@ -66,7 +63,7 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
             is BlogAction.ClearDB -> {
                 launch {
                     dataBase.deleteAll()
-                    refresh()
+                    refresh(action = RefreshAction.DeleteAll)
                 }
             }
             is BlogAction.RemoveMessages -> {
@@ -96,22 +93,46 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
         }
     }
 
+    private fun reduceRefreshAction(
+        action: BlogAction.Refresh,
+        oldState: AppState,
+    ): AppState {
+        val oldMessages = oldState.blogMessages
+        return when (val refreshAction = action.refreshAction) {
+            is RefreshAction.Add -> {
+                oldState.copy(blogMessages = oldMessages + refreshAction.message)
+            }
+            is RefreshAction.Delete -> {
+                oldState.copy(blogMessages = oldMessages - refreshAction.message)
+            }
+            is RefreshAction.DeleteAll -> {
+                oldState.copy(blogMessages = emptyList())
+            }
+        }
+    }
+
     private suspend fun deleteMessage(message: BlogMessage) {
-        dataBase?.delete(message)
-        refresh()
+        dataBase.delete(message)
+        refresh(RefreshAction.Delete(message))
     }
 
     private suspend fun addMessage(message: BlogMessage) {
-        dataBase?.add(message)
-        refresh()
+        dataBase.add(message)
+        refresh(RefreshAction.Add(message))
     }
 
     fun clearDB() {
         dispatch(BlogAction.ClearDB)
     }
 
-    private fun refresh() {
-        dispatch(BlogAction.Refresh)
+    private fun refresh(
+        action: RefreshAction
+    ) {
+        dispatch(
+            BlogAction.Refresh(
+                refreshAction = action
+            )
+        )
     }
 
     fun reverseVisibility() {
@@ -130,6 +151,4 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
         dispatch(BlogAction.RemoveMessages(state.value.visibleMessages.filter { it.isSelected }))
         dispatch(BlogAction.ReverseEditMode)
     }
-
-    private fun AppState.stateWithNewMessages() = this.copy(blogMessages = messages.value.toList())
 }
