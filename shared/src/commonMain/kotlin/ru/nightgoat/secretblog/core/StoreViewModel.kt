@@ -1,5 +1,6 @@
 package ru.nightgoat.secretblog.core
 
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -39,20 +40,20 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
         val oldState = state.value
         when (action) {
             is BlogAction.Start -> {
-                launch {
+                launch(CoroutineName("Store.Start")) {
                     val newMessages = dataBase.getAll()
                     state.value = oldState.copy(blogMessages = newMessages)
                     sideEffect.emit(BlogEffect.ScrollToLastElement)
                 }
             }
             is BlogAction.Refresh -> {
-                launch {
+                launch(CoroutineName("Store.Refresh")) {
                     state.value = reduceRefreshAction(action, oldState)
                     sideEffect.tryEmit(BlogEffect.ScrollToLastElement)
                 }
             }
             is BlogAction.AddMessage -> {
-                launch {
+                launch(CoroutineName("Store.AddMessage")) {
                     val newMessage = BlogMessage().apply {
                         text = action.message
                         isSecret = action.isSecret
@@ -61,13 +62,13 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
                 }
             }
             is BlogAction.ClearDB -> {
-                launch {
+                launch(CoroutineName("Store.ClearDB")) {
                     dataBase.deleteAll()
                     refresh(action = RefreshAction.DeleteAll)
                 }
             }
             is BlogAction.RemoveMessages -> {
-                launch {
+                launch(CoroutineName("Store.RemoveMessages")) {
                     action.messages.forEach { message ->
                         deleteMessage(message)
                     }
