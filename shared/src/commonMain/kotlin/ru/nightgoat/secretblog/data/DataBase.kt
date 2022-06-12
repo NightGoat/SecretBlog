@@ -1,8 +1,9 @@
 package ru.nightgoat.secretblog.data
 
-import io.realm.Realm
-import io.realm.RealmConfiguration
-import io.realm.query
+import io.realm.kotlin.Realm
+import io.realm.kotlin.RealmConfiguration
+import io.realm.kotlin.ext.query
+import io.realm.kotlin.types.ObjectId
 import ru.nightgoat.secretblog.models.BlogMessage
 
 class MessagesDataBase : DataBase<BlogMessage> {
@@ -14,14 +15,9 @@ class MessagesDataBase : DataBase<BlogMessage> {
         Realm.open(config)
     }
 
-    private suspend fun getLastId(): Int {
-        return getAll().lastOrNull()?.id ?: 0
-    }
-
     override suspend fun add(entity: BlogMessage) {
-        val lastId = getLastId()
         db.write {
-            copyToRealm(entity.copy(id = lastId + 1))
+            copyToRealm(entity.copy(id = ObjectId.create()))
         }
     }
 

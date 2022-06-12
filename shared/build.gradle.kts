@@ -29,7 +29,7 @@ kotlin {
                 api(config.Libs.Core.coroutines)
                 implementation(config.Libs.Koin.koin)
                 implementation(config.Libs.Core.date_time)
-                api("io.realm.kotlin:library-base:0.11.1")
+                api(config.Libs.Core.realm_db)
             }
         }
         val commonTest by getting {
@@ -59,17 +59,18 @@ kotlin {
         }
     }
 
-//    kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
-//        binaries.all {
-//            binaryOptions["memoryModel"] = "experimental"
-//        }
-//    }
-//
-//    kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
-//        binaries.all {
-//            freeCompilerArgs += "-Xruntime-logs=gc=info"
-//        }
-//    }
+    kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
+        binaries.all {
+            binaryOptions["memoryModel"] = "experimental"
+            binaryOptions["freezing"] = "disabled"
+        }
+    }
+
+    kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
+        binaries.all {
+            freeCompilerArgs += "-Xruntime-logs=gc=info"
+        }
+    }
 }
 
 android {

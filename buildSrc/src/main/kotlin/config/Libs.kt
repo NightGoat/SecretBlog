@@ -5,12 +5,12 @@ object Libs {
 
     const val kotlin_version = "1.6.10"
     const val koin_version = "3.2.0-beta-1"
-    const val kodein_db_version = "0.8.1-beta"
     const val redux_version = "0.5.5"
     const val date_time_version = "0.3.2"
-    const val coroutines_version = "1.6.1"
+    const val coroutines_version = "1.6.0"
     const val coroutines_version_native = "1.6.0-native-mt"
     const val compose_version = "1.1.1"
+    const val realm_db_version = "1.0.0"
 
     object Koin {
         const val koin = "io.insert-koin:koin-core:$koin_version"
@@ -38,19 +38,14 @@ object Libs {
         const val koin_slf4j = "io.insert-koin:koin-logger-slf4j:$koin_version"
     }
 
-    object KodeinDb {
-        const val kodein_db = "org.kodein.db:kodein-db:$kodein_db_version"
-        const val kotlin_serializer =
-            "org.kodein.db:kodein-db-serializer-kotlinx:$kodein_db_version"
-    }
-
     object Core {
         const val redux = "org.reduxkotlin:redux-kotlin-threadsafe:$redux_version"
         const val date_time = "org.jetbrains.kotlinx:kotlinx-datetime:$date_time_version"
         const val coroutines =
-            "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version_native"
+            "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
         const val coroutines_android =
             "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+        const val realm_db = "io.realm.kotlin:library-base:$realm_db_version"
     }
 
     object Compose {
