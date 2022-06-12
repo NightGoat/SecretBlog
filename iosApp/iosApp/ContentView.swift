@@ -80,20 +80,26 @@ struct ContentView: ConnectedView {
         ScrollViewReader { value in
             ScrollView {
                 ForEach(props.items, id: \.self) { message in
-                    Text(message.text)
-                        .padding()
-                        .foregroundColor(getTextColor(message: message))
-                        .background(
-                            getMessageBackGroundColor(message: message)
-                        )
-                        .cornerRadius(8)
-                        .padding(EdgeInsets(top: 10, leading: 6, bottom: 0, trailing: 10))
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .id(message.id)
+                    VStack(alignment: .trailing) {
+                        Text(message.timeFormatted())
+                            .font(.caption)
+                            .foregroundColor(getTextColor(message: message))
+                        Text(message.text)
+                            .padding(.top, 4)
+                            .foregroundColor(getTextColor(message: message))
+                    }
+                    .padding()
+                    .background(
+                        getMessageBackGroundColor(message: message)
+                    )
+                    .cornerRadius(8)
+                    .padding(EdgeInsets(top: 10, leading: 6, bottom: 0, trailing: 10))
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .id(message.text)
                 }.onChange(of: props.items) { _ in
-                    value.scrollTo(props.items.last?.id)
+                    value.scrollTo(props.items.last?.text)
                 }.onAppear {
-                    value.scrollTo(props.items.last?.id)
+                    value.scrollTo(props.items.last?.text)
                 }
             }
         }
