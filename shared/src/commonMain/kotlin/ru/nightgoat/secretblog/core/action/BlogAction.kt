@@ -1,5 +1,6 @@
-package ru.nightgoat.secretblog.core
+package ru.nightgoat.secretblog.core.action
 
+import ru.nightgoat.secretblog.core.Action
 import ru.nightgoat.secretblog.models.BlogMessage
 
 sealed class BlogAction : Action {

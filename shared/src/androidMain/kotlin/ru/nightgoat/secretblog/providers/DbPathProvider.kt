@@ -1,5 +1,4 @@
-package ru.nightgoat.secretblog.data
-
+package ru.nightgoat.secretblog.providers
 
 actual class DbPathProvider actual constructor() {
 

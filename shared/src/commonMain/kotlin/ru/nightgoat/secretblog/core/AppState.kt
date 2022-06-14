@@ -2,11 +2,13 @@ package ru.nightgoat.secretblog.core
 
 import ru.nightgoat.secretblog.models.BlogMessage
 import ru.nightgoat.secretblog.models.SecretBlogsState
+import ru.nightgoat.secretblog.models.Settings
 
 data class AppState(
     val blogMessages: List<BlogMessage> = listOf(),
     val secretBlogsState: SecretBlogsState = SecretBlogsState.HIDDEN,
     val isEdit: Boolean = false,
+    val settings: Settings = Settings(),
 ) : State {
     val visibleMessages
         get() = when (secretBlogsState) {

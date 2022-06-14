@@ -10,7 +10,9 @@ object Libs {
     const val coroutines_version = "1.6.0"
     const val coroutines_version_native = "1.6.0-native-mt"
     const val compose_version = "1.1.1"
+    const val compose_navigation = "2.4.2"
     const val realm_db_version = "1.0.0"
+    const val kvault_version = "1.9.0"
 
     object Koin {
         const val koin = "io.insert-koin:koin-core:$koin_version"
@@ -46,6 +48,7 @@ object Libs {
         const val coroutines_android =
             "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
         const val realm_db = "io.realm.kotlin:library-base:$realm_db_version"
+        const val kvault = "com.liftric:kvault:$kvault_version"
     }
 
     object Compose {
@@ -70,5 +73,6 @@ object Libs {
 
         const val activity = "androidx.activity:activity-compose:1.4.0"
         const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
+        const val navigation = "androidx.navigation:navigation-compose:$compose_navigation"
     }
 }

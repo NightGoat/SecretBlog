@@ -3,6 +3,7 @@ package ru.nightgoat.secretblog.data
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.types.ObjectId
 import ru.nightgoat.secretblog.models.BlogMessage
+import ru.nightgoat.secretblog.providers.DataBaseProvider
 
 class MessagesDataBase(private val provider: DataBaseProvider) : DataBase<BlogMessage> {
 

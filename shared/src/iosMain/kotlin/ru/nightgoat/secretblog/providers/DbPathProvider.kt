@@ -1,4 +1,4 @@
-package ru.nightgoat.secretblog.data
+package ru.nightgoat.secretblog.providers
 
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSSearchPathForDirectoriesInDomains

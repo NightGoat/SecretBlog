@@ -27,9 +27,10 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(config.Libs.Core.coroutines)
+                api(config.Libs.Core.realm_db)
                 implementation(config.Libs.Koin.koin)
                 implementation(config.Libs.Core.date_time)
-                api(config.Libs.Core.realm_db)
+                implementation(config.Libs.Core.kvault)
             }
         }
         val commonTest by getting {

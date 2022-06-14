@@ -1,4 +1,4 @@
-package ru.nightgoat.secretblog.data
+package ru.nightgoat.secretblog.providers
 
 import android.content.Context
 import org.koin.core.component.KoinComponent

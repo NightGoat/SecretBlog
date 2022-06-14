@@ -1,4 +1,4 @@
-package ru.nightgoat.secretblog.data
+package ru.nightgoat.secretblog.providers
 
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
