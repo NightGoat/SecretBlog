@@ -18,11 +18,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
-import ru.nightgoat.secretblog.android.presentation.navigate
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
+import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.core.action.PinCodeAction
 
 @Composable
@@ -31,16 +31,16 @@ fun PinCodeScreen(
     viewModel: StoreViewModel,
     state: AppState,
     sideEffect: BlogEffect,
-    isFromSplashArg: String
+    isPincodeCheckArg: String
 ) {
-    val isFromSplash = isFromSplashArg == "1"
+    val isPincodeCheck = isPincodeCheckArg == Screen.PinCode.IS_PINCODE_CHECK
     var enteredPincode by remember { mutableStateOf("") }
     when (sideEffect) {
         is BlogEffect.PincodeCheckResult -> {
             LaunchedEffect(enteredPincode) {
                 val isPincodeCorrect = sideEffect.isPincodeRight
                 if (isPincodeCorrect) {
-                    navController.navigate(Screen.Chat)
+                    viewModel.dispatch(GlobalAction.Navigate(Screen.Chat.route))
                 }
             }
         }
@@ -53,11 +53,11 @@ fun PinCodeScreen(
             enteredPincode = newPincode
             val isPincodeMax = newPincode.length >= 4
             when {
-                isPincodeMax && !isFromSplash -> {
+                isPincodeMax && !isPincodeCheck -> {
                     viewModel.dispatch(PinCodeAction.SetPincode(enteredPincode))
                     enteredPincode = ""
                 }
-                isPincodeMax && isFromSplash -> {
+                isPincodeMax && isPincodeCheck -> {
                     viewModel.dispatch(PinCodeAction.CheckPincode(enteredPincode))
                     enteredPincode = ""
                 }

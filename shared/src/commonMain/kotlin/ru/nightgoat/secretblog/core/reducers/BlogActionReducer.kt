@@ -19,7 +19,7 @@ fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
                     blogMessages = newMessages,
                     settings = settingsProvider.settings
                 )
-                sideEffect.emit(BlogEffect.ScrollToLastElement)
+                sideEffect.emit(BlogEffect.LoadSuccess)
             }
         }
         is BlogAction.Refresh -> {

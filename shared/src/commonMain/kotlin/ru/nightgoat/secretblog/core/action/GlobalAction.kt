@@ -7,4 +7,8 @@ sealed class GlobalAction : Action {
         val route: String,
         val argument: String? = null
     ) : GlobalAction()
+
+    object NavigateBack : GlobalAction()
+    object AppPaused : GlobalAction()
+    object AppResumed : GlobalAction()
 }

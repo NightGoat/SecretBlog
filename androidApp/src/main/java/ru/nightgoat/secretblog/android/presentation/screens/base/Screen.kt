@@ -8,7 +8,12 @@ sealed class Screen {
     }
 
     object PinCode : Screen() {
+        const val IS_PINCODE_CHECK_ARG = "isPincodeCheck"
+        const val IS_PINCODE_CHECK = "1"
+        const val IS_PINCODE_SET = "0"
         override val route = PIN_CODE_ROUTE
+        val routeWithCheck = "$route/$IS_PINCODE_CHECK"
+        val routeWithSet = "$route/$IS_PINCODE_SET"
     }
 
     object Chat : Screen() {

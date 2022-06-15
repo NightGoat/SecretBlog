@@ -20,12 +20,15 @@ import ru.nightgoat.secretblog.android.presentation.screens.PinCodeScreen
 import ru.nightgoat.secretblog.android.presentation.screens.SettingsScreen
 import ru.nightgoat.secretblog.android.presentation.screens.SplashScreen
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
+import ru.nightgoat.secretblog.android.presentation.screens.base.Screen.PinCode.IS_PINCODE_CHECK_ARG
 import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
+import ru.nightgoat.secretblog.core.action.GlobalAction
 
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: StoreViewModel by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Napier.d {
@@ -37,6 +40,11 @@ class MainActivity : AppCompatActivity() {
             val state by viewModel.observeState().collectAsState()
             val effects by viewModel.observeSideEffect().collectAsState(initial = BlogEffect.Empty)
             when (effects) {
+                is BlogEffect.LogOut -> {
+                    LaunchedEffect(effects) {
+                        navController.navigate(Screen.PinCode.routeWithCheck)
+                    }
+                }
                 is BlogEffect.Navigate -> {
                     LaunchedEffect(effects) {
                         val effect = effects as BlogEffect.Navigate
@@ -73,15 +81,18 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
                 composable(
-                    Screen.PinCode.route.plus("/{isFromSplash}"),
-                    arguments = listOf(navArgument("isFromSplash") { type = NavType.StringType })
+                    Screen.PinCode.route.plus("/{$IS_PINCODE_CHECK_ARG}"),
+                    arguments = listOf(navArgument(IS_PINCODE_CHECK_ARG) {
+                        type = NavType.StringType
+                    })
                 ) { backStackEntry ->
                     PinCodeScreen(
                         navController = navController,
                         viewModel = viewModel,
                         state = state,
                         sideEffect = effects,
-                        isFromSplashArg = backStackEntry.arguments?.getString("isFromSplash") ?: "0"
+                        isPincodeCheckArg = backStackEntry.arguments?.getString(IS_PINCODE_CHECK_ARG)
+                            ?: "0"
                     )
                 }
                 composable(Screen.Chat.route) {
@@ -102,5 +113,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.dispatch(GlobalAction.AppPaused)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.dispatch(GlobalAction.AppResumed)
     }
 }

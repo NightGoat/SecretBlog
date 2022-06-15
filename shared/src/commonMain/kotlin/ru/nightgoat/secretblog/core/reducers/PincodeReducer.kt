@@ -23,7 +23,7 @@ fun StoreViewModel.pincodeReducer(action: PinCodeAction, oldState: AppState) {
             launch {
                 settingsProvider.setNewPincode(action.newPincode)
                 state.value = oldState.setPincode(true)
-                sideEffect.emit(BlogEffect.NavigateBack)
+                goBack()
             }
         }
     }

@@ -3,6 +3,8 @@ package ru.nightgoat.secretblog.core
 sealed class BlogEffect : Effect {
     object Empty : BlogEffect()
     object ScrollToLastElement : BlogEffect()
+    object LoadSuccess : BlogEffect()
+    object LogOut : BlogEffect()
     data class PincodeCheckResult(
         val isPincodeRight: Boolean
     ) : BlogEffect()

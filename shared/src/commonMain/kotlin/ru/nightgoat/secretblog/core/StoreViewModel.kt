@@ -2,10 +2,12 @@ package ru.nightgoat.secretblog.core
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ru.nightgoat.secretblog.core.action.BlogAction
@@ -22,7 +24,7 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
     val settingsProvider: SettingsProvider by inject()
 
     var state = MutableStateFlow(AppState())
-    var sideEffect = MutableSharedFlow<BlogEffect>(extraBufferCapacity = 10)
+    var sideEffect = MutableSharedFlow<BlogEffect>(extraBufferCapacity = 1, replay = 1)
 
     override fun observeState(): StateFlow<AppState> = state
     override fun observeSideEffect(): Flow<BlogEffect> = sideEffect
@@ -75,5 +77,21 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
     fun deleteSelectedMessages() {
         dispatch(BlogAction.RemoveMessages(state.value.visibleMessages.filter { it.isSelected }))
         dispatch(BlogAction.ReverseEditMode)
+    }
+
+    fun goBack() {
+        reduceSideEffect(BlogEffect.NavigateBack)
+    }
+
+    fun reduceSideEffect(effect: BlogEffect) {
+        launch {
+            sideEffect.emit(effect)
+            delay(100)
+            sideEffect.emit(BlogEffect.Empty)
+        }
+    }
+
+    fun clearSideEffects() {
+        reduceSideEffect(BlogEffect.Empty)
     }
 }

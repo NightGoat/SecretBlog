@@ -1,13 +1,22 @@
 package ru.nightgoat.secretblog.android.presentation.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Checkbox
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import ru.nightgoat.secretblog.android.R
+import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.core.AppState
@@ -25,9 +34,17 @@ fun SettingsScreen(
 ) {
     MainContent(
         state = state,
+        onBackPressed = {
+            viewModel.reduceSideEffect(BlogEffect.NavigateBack)
+        },
         onPincodeCheck = { isChecked ->
             if (isChecked) {
-                viewModel.dispatch(GlobalAction.Navigate(Screen.PinCode.route, "0"))
+                viewModel.dispatch(
+                    GlobalAction.Navigate(
+                        Screen.PinCode.route,
+                        Screen.PinCode.IS_PINCODE_SET
+                    )
+                )
             } else {
                 viewModel.dispatch(SettingsAction.TurnOffPincode)
             }
@@ -38,26 +55,98 @@ fun SettingsScreen(
 @Composable
 private fun MainContent(
     state: AppState = AppState(),
+    onBackPressed: () -> Unit = {},
     onPincodeCheck: (Boolean) -> Unit = {}
 ) {
     Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Toolbar("Settings") {
+            onBackPressed()
+        }
+        Settings(state, onPincodeCheck)
+    }
+}
+
+@Composable
+private fun Settings(
+    state: AppState,
+    onPincodeCheck: (Boolean) -> Unit
+) {
+    Column(
+        modifier = Modifier.padding(defaultPadding)
+    ) {
+        SettingsCheckBox("Pin code", state, onPincodeCheck)
+    }
+}
+
+@Composable
+private fun SettingsCheckBox(
+    text: String,
+    state: AppState,
+    onCheckBoxClick: (Boolean) -> Unit
+) {
+    val isPinCodeSet = state.settings.isPinCodeSet
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .fillMaxSize()
-            .padding(defaultPadding)
+            .fillMaxWidth()
+            .clickable {
+                onCheckBoxClick(!isPinCodeSet)
+            }
+    ) {
+        Text(
+            modifier = Modifier.padding(start = defaultPadding),
+            text = text
+        )
+        Checkbox(
+            checked = isPinCodeSet,
+            onCheckedChange = onCheckBoxClick
+        )
+    }
+}
+
+@Composable
+fun Toolbar(
+    title: String = "",
+    isBackButtonVisible: Boolean = true,
+    onBackPressed: () -> Unit = {},
+) {
+    Surface(
+        elevation = 4.dp,
+        color = Color.White
     ) {
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Pin code")
-            Checkbox(
-                checked = state.settings.isPinCodeSet,
-                onCheckedChange = onPincodeCheck
-            )
+            if (isBackButtonVisible) {
+                SimpleSpacer()
+                Image(
+                    modifier = Modifier
+                        .clickable {
+                            onBackPressed()
+                        }
+                        .padding(defaultPadding),
+                    painter = painterResource(id = R.drawable.ic_outline_arrow_back_24),
+                    contentDescription = "go back"
+                )
+            }
+            if (title.isNotEmpty()) {
+                SimpleSpacer()
+                Text(
+                    modifier = Modifier.weight(1f),
+                    fontSize = 20.sp,
+                    text = title
+                )
+            }
         }
     }
 }
+
 
 @Preview(
     showBackground = true
