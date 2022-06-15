@@ -7,13 +7,14 @@ import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.BlogAction
 import ru.nightgoat.secretblog.core.action.RefreshAction
+import ru.nightgoat.secretblog.core.turnOffEditMode
 import ru.nightgoat.secretblog.models.BlogMessage
 
 fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
     when (action) {
         is BlogAction.Start -> {
             launch(CoroutineName("Store.Start")) {
-                val newMessages = dataBase.getAll()
+                val newMessages = dataBase.init()
                 state.value = oldState.copy(
                     blogMessages = newMessages,
                     settings = settingsProvider.settings
@@ -24,15 +25,15 @@ fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
         is BlogAction.Refresh -> {
             launch(CoroutineName("Store.Refresh")) {
                 state.value = reduceRefreshAction(action, oldState)
-                sideEffect.tryEmit(BlogEffect.ScrollToLastElement)
+                sideEffect.emit(BlogEffect.ScrollToLastElement)
             }
         }
         is BlogAction.AddMessage -> {
             launch(CoroutineName("Store.AddMessage")) {
-                val newMessage = BlogMessage().apply {
-                    text = action.message
+                val newMessage = BlogMessage.newInstance(
+                    text = action.message,
                     isSecret = action.isSecret
-                }
+                )
                 addMessage(newMessage)
             }
         }
@@ -43,11 +44,14 @@ fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
             }
         }
         is BlogAction.RemoveMessages -> {
-            launch(CoroutineName("Store.RemoveMessages")) {
-                action.messages.forEach { message ->
-                    deleteMessage(message)
+            val messages = action.messages.toList()
+            messages.forEach { message ->
+                launch(CoroutineName("Store.RemoveMessages")) {
+                    dataBase.delete(message)
                 }
             }
+
+            refresh(RefreshAction.Delete(messages))
         }
         is BlogAction.ReverseSecretBlogsVisibility -> {
             state.value = oldState.reversedVisibility
@@ -79,10 +83,10 @@ private fun reduceRefreshAction(
             oldState.copy(blogMessages = oldMessages + refreshAction.message)
         }
         is RefreshAction.Delete -> {
-            oldState.copy(blogMessages = oldMessages - refreshAction.message)
+            oldState.copy(blogMessages = oldMessages - refreshAction.messages.toSet())
         }
         is RefreshAction.DeleteAll -> {
             oldState.copy(blogMessages = emptyList())
         }
-    }
+    }.turnOffEditMode()
 }

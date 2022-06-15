@@ -19,6 +19,6 @@ sealed class BlogAction : Action {
 
 sealed class RefreshAction {
     data class Add(val message: BlogMessage) : RefreshAction()
-    data class Delete(val message: BlogMessage) : RefreshAction()
+    data class Delete(val messages: List<BlogMessage>) : RefreshAction()
     object DeleteAll : RefreshAction()
 }

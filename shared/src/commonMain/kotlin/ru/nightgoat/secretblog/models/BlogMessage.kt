@@ -1,6 +1,5 @@
 package ru.nightgoat.secretblog.models
 
-import io.realm.kotlin.types.ObjectId
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
 import ru.nightgoat.secretblog.data.Entity
@@ -9,14 +8,14 @@ import ru.nightgoat.secretblog.utils.getFullTimeStamp
 
 class BlogMessage : RealmObject, Entity {
 
-    var id: ObjectId = ObjectId.create()
+    var id: Long = 0
     var text: String = ""
     var time: RealmInstant = TimeUtils.nowRealmInstant
     var isSecret: Boolean = false
     var isSelected: Boolean = false
 
     fun copy(
-        id: ObjectId = this.id,
+        id: Long = this.id,
         text: String = this.text,
         time: RealmInstant = this.time,
         isSecret: Boolean = this.isSecret,
@@ -33,4 +32,17 @@ class BlogMessage : RealmObject, Entity {
 
     fun makeSecret() = this.copy(isSecret = true)
     fun revealSecret() = this.copy(isSecret = false)
+
+    companion object {
+        fun newInstance(
+            id: Long = 0,
+            text: String = "",
+            time: RealmInstant = TimeUtils.nowRealmInstant,
+            isSecret: Boolean = false,
+            isSelected: Boolean = false,
+        ): BlogMessage {
+            val new = BlogMessage()
+            return new.copy(id, text, time, isSecret, isSelected)
+        }
+    }
 }

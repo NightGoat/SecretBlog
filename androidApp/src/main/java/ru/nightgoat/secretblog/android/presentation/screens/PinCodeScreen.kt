@@ -62,6 +62,10 @@ fun PinCodeScreen(
                     enteredPincode = ""
                 }
             }
+        },
+        onDeleteClick = {
+            val newPincode = enteredPincode.dropLast(1)
+            enteredPincode = newPincode
         }
     )
 }
@@ -70,17 +74,23 @@ fun PinCodeScreen(
 private fun MainContent(
     state: AppState = AppState(),
     pincode: String = "",
-    onButtonClick: (String) -> Unit = {}
+    onButtonClick: (String) -> Unit = {},
+    onDeleteClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
     ) {
         Dots(pincode)
-        PincodeRow("1", "2", "3", onButtonClick)
-        PincodeRow("4", "5", "6", onButtonClick)
-        PincodeRow("7", "8", "9", onButtonClick)
-        PincodeRow(secondText = "0", onButtonClick = onButtonClick)
+        PincodeRow("1", "2", "3", onButtonClick = onButtonClick)
+        PincodeRow("4", "5", "6", onButtonClick = onButtonClick)
+        PincodeRow("7", "8", "9", onButtonClick = onButtonClick)
+        PincodeRow(
+            secondText = "0",
+            thirdText = "⌫",
+            onButtonClick = onButtonClick,
+            onDeleteClick = onDeleteClick
+        )
     }
 }
 
@@ -116,7 +126,8 @@ private fun PincodeRow(
     firstText: String = "",
     secondText: String = "",
     thirdText: String = "",
-    onButtonClick: (String) -> Unit
+    onButtonClick: (String) -> Unit = { _ -> },
+    onDeleteClick: (() -> Unit)? = null
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -125,14 +136,19 @@ private fun PincodeRow(
     ) {
         PincodeButton(text = firstText, onClick = onButtonClick)
         PincodeButton(text = secondText, onClick = onButtonClick)
-        PincodeButton(text = thirdText, onClick = onButtonClick)
+        if (onDeleteClick != null) {
+            PincodeButton(text = thirdText, onDeleteClick = onDeleteClick)
+        } else {
+            PincodeButton(text = thirdText, onClick = onButtonClick)
+        }
     }
 }
 
 @Composable
 private fun PincodeButton(
-    text: String,
-    onClick: (String) -> Unit
+    text: String = "",
+    onClick: (String) -> Unit = {},
+    onDeleteClick: (() -> Unit)? = null
 ) {
     if (text.isNotEmpty()) {
         Box(
@@ -142,7 +158,12 @@ private fun PincodeButton(
                 .clip(CircleShape)                       // clip to the circle shape
                 .border(2.dp, Color.Gray, CircleShape)
                 .clickable {
-                    onClick(text)
+                    if (text.isNotEmpty() && onDeleteClick == null) {
+                        onClick(text)
+                    }
+                    onDeleteClick?.let {
+                        it()
+                    }
                 },
         ) {
             Text(
@@ -154,6 +175,8 @@ private fun PincodeButton(
                 textAlign = TextAlign.Center
             )
         }
+    } else {
+        Box(modifier = Modifier.size(64.dp))
     }
 }
 

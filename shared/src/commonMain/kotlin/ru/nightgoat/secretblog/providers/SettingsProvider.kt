@@ -10,7 +10,7 @@ class SettingsProvider : KVaultPref() {
             isPinCodeSet = isPinCodeSet
         )
 
-    private var pinCode: String? by stringPref(PIN_CODE_KEY)
+    private var pinCode: String by stringPref(PIN_CODE_KEY)
     var isPinCodeSet: Boolean by booleanPref(IS_PIN_CODE_SET_KEY)
 
     fun setNewPincode(newPincode: String) {
@@ -20,7 +20,7 @@ class SettingsProvider : KVaultPref() {
 
     fun clearPincode() {
         isPinCodeSet = false
-        pinCode = null
+        pinCode = ""
     }
 
     fun isPinCodeCorrect(newPincode: String): Boolean {

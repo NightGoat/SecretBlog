@@ -28,11 +28,6 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
     override fun observeSideEffect(): Flow<BlogEffect> = sideEffect
     override fun dispatch(action: Action) = mainReducer(action)
 
-    suspend fun deleteMessage(message: BlogMessage) {
-        dataBase.delete(message)
-        refresh(RefreshAction.Delete(message))
-    }
-
     fun addMessage(message: String, isSecret: Boolean = false) {
         message.takeIf { it.isNotEmpty() }?.let { newMessage ->
             val action = BlogAction.AddMessage(
@@ -46,8 +41,8 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
 
     suspend fun addMessage(message: BlogMessage) {
         if (message.text.isNotEmpty()) {
-            dataBase.add(message)
-            refresh(RefreshAction.Add(message))
+            val newId = dataBase.add(message)
+            refresh(RefreshAction.Add(message.copy(id = newId)))
         }
     }
 
