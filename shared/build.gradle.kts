@@ -28,6 +28,7 @@ kotlin {
             dependencies {
                 api(config.Libs.Core.coroutines)
                 api(config.Libs.Core.realm_db)
+                api(config.Libs.Core.napier)
                 implementation(config.Libs.Koin.koin)
                 implementation(config.Libs.Core.date_time)
                 implementation(config.Libs.Core.kvault)
@@ -70,6 +71,7 @@ kotlin {
     kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
         binaries.all {
             freeCompilerArgs += "-Xruntime-logs=gc=info"
+            freeCompilerArgs += "-Xgc=cms"
         }
     }
 }

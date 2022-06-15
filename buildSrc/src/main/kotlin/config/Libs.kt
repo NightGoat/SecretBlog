@@ -3,7 +3,7 @@ package config
 
 object Libs {
 
-    const val kotlin_version = "1.6.10"
+    const val kotlin_version = "1.6.20"
     const val koin_version = "3.2.0-beta-1"
     const val redux_version = "0.5.5"
     const val date_time_version = "0.3.2"
@@ -13,6 +13,7 @@ object Libs {
     const val compose_navigation = "2.4.2"
     const val realm_db_version = "1.0.0"
     const val kvault_version = "1.9.0"
+    const val napierVersion = "2.6.1"
 
     object Koin {
         const val koin = "io.insert-koin:koin-core:$koin_version"
@@ -49,6 +50,7 @@ object Libs {
             "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
         const val realm_db = "io.realm.kotlin:library-base:$realm_db_version"
         const val kvault = "com.liftric:kvault:$kvault_version"
+        const val napier = "io.github.aakira:napier:$napierVersion"
     }
 
     object Compose {

@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import io.github.aakira.napier.Napier
 import org.koin.android.ext.android.inject
 import ru.nightgoat.secretblog.android.presentation.screens.ChatScreen
 import ru.nightgoat.secretblog.android.presentation.screens.PinCodeScreen
@@ -27,6 +28,9 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: StoreViewModel by inject()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Napier.d {
+            "App start"
+        }
         setContent {
             val navController = rememberNavController()
             val context = LocalContext.current
