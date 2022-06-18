@@ -176,7 +176,9 @@ private fun PincodeButton(
             )
         }
     } else {
-        Box(modifier = Modifier.size(64.dp))
+        Box(modifier = Modifier
+            .padding(defaultPadding)
+            .size(64.dp))
     }
 }
 
