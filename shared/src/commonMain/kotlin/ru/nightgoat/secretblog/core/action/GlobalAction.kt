@@ -11,4 +11,5 @@ sealed class GlobalAction : Action {
     object NavigateBack : GlobalAction()
     object AppPaused : GlobalAction()
     object AppResumed : GlobalAction()
+    object ClearApp : GlobalAction()
 }

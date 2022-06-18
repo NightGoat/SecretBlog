@@ -30,5 +30,13 @@ fun StoreViewModel.globalActionReducer(action: GlobalAction, oldState: AppState)
                 }
             }
         }
+        is GlobalAction.ClearApp -> {
+            launch {
+                dataBase.deleteAll()
+                settingsProvider.clearPincode()
+                state.value = AppState()
+                reduceSideEffect(BlogEffect.ClearBackStackAndGoToChat)
+            }
+        }
     }
 }

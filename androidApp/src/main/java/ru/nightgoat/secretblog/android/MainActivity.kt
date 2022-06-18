@@ -70,6 +70,15 @@ class MainActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
+                is BlogEffect.ClearBackStackAndGoToChat -> {
+                    LaunchedEffect(effects) {
+                        navController.navigate(Screen.Chat.route) {
+                            popUpTo(Screen.Splash.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                }
             }
             NavHost(navController = navController, startDestination = Screen.Splash.route) {
                 composable(Screen.Splash.route) {

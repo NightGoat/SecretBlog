@@ -1,10 +1,13 @@
 package ru.nightgoat.secretblog.android.presentation.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,11 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import ru.nightgoat.secretblog.android.presentation.AppColor
+import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.core.AppState
@@ -33,6 +39,9 @@ fun PinCodeScreen(
     sideEffect: BlogEffect,
     isPincodeCheckArg: String
 ) {
+    BackHandler {
+
+    }
     val isPincodeCheck = isPincodeCheckArg == Screen.PinCode.IS_PINCODE_CHECK
     var enteredPincode by remember { mutableStateOf("") }
     when (sideEffect) {
@@ -44,10 +53,21 @@ fun PinCodeScreen(
                 }
             }
         }
+        is BlogEffect.CannotRememberPinCodeDialog -> {
+            DeleteDatabaseDialog(
+                onCancelClick = {
+                    viewModel.clearSideEffects()
+                },
+                onYesClick = {
+                    viewModel.dispatch(GlobalAction.ClearApp)
+                }
+            )
+        }
     }
     MainContent(
         state = state,
         pincode = enteredPincode,
+        isPincCodeCheckScreen = isPincodeCheck,
         onButtonClick = { buttonText ->
             val newPincode = enteredPincode.plus(buttonText)
             enteredPincode = newPincode
@@ -66,6 +86,46 @@ fun PinCodeScreen(
         onDeleteClick = {
             val newPincode = enteredPincode.dropLast(1)
             enteredPincode = newPincode
+        },
+        onCantRememberClick = {
+            viewModel.dispatch(PinCodeAction.CannotRememberPinCode)
+        }
+    )
+}
+
+@Composable
+private fun DeleteDatabaseDialog(
+    onCancelClick: () -> Unit,
+    onYesClick: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onCancelClick,
+        title = {
+            Text("Warning!")
+        },
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(defaultPadding),
+            ) {
+                Button(
+                    modifier = Modifier.weight(0.5f),
+                    onClick = onCancelClick,
+                ) {
+                    Text("No")
+                }
+                SimpleSpacer()
+                Button(
+                    modifier = Modifier.weight(0.5f),
+                    onClick = onYesClick
+                ) {
+                    Text("Yes")
+                }
+            }
+        },
+        text = {
+            Text(text = "This action will erase all data from app and let you in through pincode, do you wish to continue?")
         }
     )
 }
@@ -73,25 +133,60 @@ fun PinCodeScreen(
 @Composable
 private fun MainContent(
     state: AppState = AppState(),
+    isPincCodeCheckScreen: Boolean = true,
     pincode: String = "",
     onButtonClick: (String) -> Unit = {},
-    onDeleteClick: () -> Unit = {}
+    onDeleteClick: () -> Unit = {},
+    onCantRememberClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
     ) {
-        Dots(pincode)
-        PincodeRow("1", "2", "3", onButtonClick = onButtonClick)
-        PincodeRow("4", "5", "6", onButtonClick = onButtonClick)
-        PincodeRow("7", "8", "9", onButtonClick = onButtonClick)
-        PincodeRow(
-            secondText = "0",
-            thirdText = "⌫",
-            onButtonClick = onButtonClick,
-            onDeleteClick = onDeleteClick
-        )
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Dots(pincode)
+            Numpad(onButtonClick, onDeleteClick)
+        }
+        if (isPincCodeCheckScreen) {
+            CantRememberPincodeMessage(onCantRememberClick)
+        }
     }
+
+}
+
+@Composable
+fun CantRememberPincodeMessage(
+    onClick: () -> Unit
+) {
+    Text(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 64.dp, top = 4.dp)
+            .clickable(onClick = onClick),
+        text = "I cannot remember pincode",
+        color = AppColor.appleBlue,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Medium,
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+private fun Numpad(
+    onButtonClick: (String) -> Unit,
+    onDeleteClick: () -> Unit
+) {
+    PincodeRow("1", "2", "3", onButtonClick = onButtonClick)
+    PincodeRow("4", "5", "6", onButtonClick = onButtonClick)
+    PincodeRow("7", "8", "9", onButtonClick = onButtonClick)
+    PincodeRow(
+        secondText = "0",
+        thirdText = "⌫",
+        onButtonClick = onButtonClick,
+        onDeleteClick = onDeleteClick
+    )
 }
 
 @Composable
@@ -106,7 +201,7 @@ private fun Dots(pincode: String) {
         Canvas(modifier = Modifier) {
             for (i in 0..3) {
                 val color = if (4 - pincodeLength <= i) {
-                    Color.Blue
+                    AppColor.appleBlue
                 } else {
                     Color.Gray
                 }
@@ -176,9 +271,11 @@ private fun PincodeButton(
             )
         }
     } else {
-        Box(modifier = Modifier
-            .padding(defaultPadding)
-            .size(64.dp))
+        Box(
+            modifier = Modifier
+                .padding(defaultPadding)
+                .size(64.dp)
+        )
     }
 }
 

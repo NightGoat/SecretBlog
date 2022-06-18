@@ -9,6 +9,8 @@ sealed class BlogEffect : Effect {
         val isPincodeRight: Boolean
     ) : BlogEffect()
 
+    object CannotRememberPinCodeDialog : BlogEffect()
+
     data class Error(val error: Exception) : BlogEffect()
     data class Toast(
         val text: String
@@ -20,4 +22,5 @@ sealed class BlogEffect : Effect {
     ) : BlogEffect()
 
     object NavigateBack : BlogEffect()
+    object ClearBackStackAndGoToChat : BlogEffect()
 }

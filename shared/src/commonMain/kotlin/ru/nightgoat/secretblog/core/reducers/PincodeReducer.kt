@@ -26,5 +26,10 @@ fun StoreViewModel.pincodeReducer(action: PinCodeAction, oldState: AppState) {
                 goBack()
             }
         }
+        is PinCodeAction.CannotRememberPinCode -> {
+            launch {
+                sideEffect.emit(BlogEffect.CannotRememberPinCodeDialog)
+            }
+        }
     }
 }

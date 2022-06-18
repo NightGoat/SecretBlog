@@ -10,4 +10,6 @@ sealed class PinCodeAction : Action {
     data class CheckPincode(
         val pincodeToCheck: String
     ) : PinCodeAction()
+
+    object CannotRememberPinCode : PinCodeAction()
 }
