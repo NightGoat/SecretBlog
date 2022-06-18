@@ -1,5 +1,6 @@
 package ru.nightgoat.secretblog.core.reducers
 
+import kotlinx.coroutines.launch
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
@@ -18,6 +19,16 @@ fun StoreViewModel.globalActionReducer(action: GlobalAction, oldState: AppState)
                 sideEffect.tryEmit(BlogEffect.LogOut)
             }
         }
+        is GlobalAction.AppResumed -> {
+            launch {
+                val all = dataBase.getAll()
+                if (state.value.blogMessages.size != all.size) {
+                    state.value = oldState.copy(
+                        blogMessages = all,
+                        settings = settingsProvider.settings
+                    )
+                }
+            }
+        }
     }
-
 }
