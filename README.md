@@ -4,10 +4,11 @@ Kotlin Multiplatform Mobile diary app. Visually it looks like messenger for fast
 TODO:
 1. Fix navigation.
 2. ~Fix Pincode screen~
-3. Add pincode for show/hide secret messages.
-4. Hide delete all messages button in settings.
+3. ~Add pincode for show/hide secret messages.~
+4. ~Hide delete all messages button in settings.~
 5. Fix iOs Ui (no pincode, settings, message selection)
 6. ~Shared strings class.~
+7. Add pincode check to settings button
 
 ```
 MIT License
