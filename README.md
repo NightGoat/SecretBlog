@@ -7,7 +7,7 @@ TODO:
 3. Add pincode for show/hide secret messages.
 4. Hide delete all messages button in settings.
 5. Fix iOs Ui (no pincode, settings, message selection)
-6. Shared strings class.
+6. ~Shared strings class.~
 
 ```
 MIT License
