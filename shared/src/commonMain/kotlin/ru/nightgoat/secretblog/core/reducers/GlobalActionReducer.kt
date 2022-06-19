@@ -21,7 +21,7 @@ fun StoreViewModel.globalActionReducer(action: GlobalAction, oldState: AppState)
         }
         is GlobalAction.AppResumed -> {
             launch {
-                val all = dataBase.getAll()
+                val all = dataBase.init()
                 if (state.value.blogMessages.size != all.size) {
                     state.value = oldState.copy(
                         blogMessages = all,
