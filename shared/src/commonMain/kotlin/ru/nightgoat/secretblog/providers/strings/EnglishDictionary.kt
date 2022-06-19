@@ -4,6 +4,7 @@ object EnglishDictionary : Dictionary {
     //Common
     override val yes: String by lazy { "Yes" }
     override val no by lazy { "No" }
+    override val back by lazy { "Back" }
 
     //Pin
     override val wrongPincode by lazy { "Wrong pin!" }

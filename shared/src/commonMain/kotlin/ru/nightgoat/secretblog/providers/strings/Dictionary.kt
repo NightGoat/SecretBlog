@@ -5,6 +5,7 @@ interface Dictionary {
     //Common
     val yes: String
     val no: String
+    val back: String
 
     //Splash
 

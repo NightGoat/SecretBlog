@@ -28,7 +28,7 @@ fun SplashScreen(
             viewModel.dispatch(
                 GlobalAction.Navigate(
                     Screen.PinCode.route,
-                    Screen.PinCode.IS_PINCODE_CHECK
+                    Screen.PinCode.IS_PINCODE_CHECK_ON_LOGIN
                 )
             )
         } else {

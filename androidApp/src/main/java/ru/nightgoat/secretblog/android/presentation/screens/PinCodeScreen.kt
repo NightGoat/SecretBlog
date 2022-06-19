@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import io.github.aakira.napier.Napier
 import ru.nightgoat.secretblog.android.presentation.AppColor
 import ru.nightgoat.secretblog.android.presentation.composables.AppAlert
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
@@ -46,35 +45,18 @@ fun PinCodeScreen(
     isPincodeCheckArg: String,
     dictionary: Dictionary
 ) {
+    val pincodeScreenState = Screen.PinCode.State.fromArg(isPincodeCheckArg)
+    val onBackClick = { navController.popBackStack() }
     BackHandler {
-
+        if (pincodeScreenState.isBackButtonVisible()) {
+            onBackClick()
+        }
     }
-    val isPincodeCheck = isPincodeCheckArg == Screen.PinCode.IS_PINCODE_CHECK
-    val isPinOnVisibilityCheck =
-        isPincodeCheckArg == Screen.PinCode.IS_PINCODE_CHECK_ON_SECRET_VISIBILITY
     var enteredPincode by remember { mutableStateOf("") }
     when (sideEffect) {
         is BlogEffect.PincodeCheckResult -> {
             LaunchedEffect(enteredPincode) {
-                val isPincodeCorrect = sideEffect.isPincodeRight
-                when {
-                    isPincodeCheck && isPincodeCorrect -> {
-                        Napier.e {
-                            """
-                                IN PIN CODE CHECK
-                            """.trimIndent()
-                        }
-                        viewModel.dispatch(GlobalAction.Navigate(Screen.Chat.route))
-                    }
-                    isPinOnVisibilityCheck && isPincodeCorrect -> {
-                        Napier.e {
-                            """
-                                IN PIN CODE VISIBILITY CHECK
-                            """.trimIndent()
-                        }
-                        viewModel.dispatch(PinCodeAction.ReverseSecretMessagesVisibility)
-                    }
-                }
+                reducePincodeCheck(sideEffect, pincodeScreenState, viewModel)
             }
         }
         is BlogEffect.CannotRememberPinCodeDialog -> {
@@ -94,17 +76,17 @@ fun PinCodeScreen(
         state = state,
         dictionary = dictionary,
         pincode = enteredPincode,
-        isPincCodeCheckScreen = isPincodeCheck || isPinOnVisibilityCheck,
+        pincodeScreenState = pincodeScreenState,
         onButtonClick = { buttonText ->
             val newPincode = enteredPincode.plus(buttonText)
             enteredPincode = newPincode
             val isPincodeMax = newPincode.length >= pincodeMaxLength
             when {
-                isPincodeMax && !(isPincodeCheck || isPinOnVisibilityCheck) -> {
+                isPincodeMax && pincodeScreenState == Screen.PinCode.State.SET -> {
                     viewModel.dispatch(PinCodeAction.SetPincode(enteredPincode))
                     enteredPincode = ""
                 }
-                isPincodeMax && (isPincodeCheck || isPinOnVisibilityCheck) -> {
+                isPincodeMax && pincodeScreenState != Screen.PinCode.State.SET -> {
                     viewModel.dispatch(PinCodeAction.CheckPincode(enteredPincode))
                     enteredPincode = ""
                 }
@@ -116,8 +98,32 @@ fun PinCodeScreen(
         },
         onCantRememberClick = {
             viewModel.dispatch(PinCodeAction.CannotRememberPinCode)
+        },
+        onBackClick = {
+            onBackClick()
         }
     )
+}
+
+private fun reducePincodeCheck(
+    sideEffect: BlogEffect.PincodeCheckResult,
+    pincodeScreenState: Screen.PinCode.State,
+    viewModel: StoreViewModel
+) {
+    if (sideEffect.isPincodeRight) {
+        when (pincodeScreenState) {
+            Screen.PinCode.State.CHECK_ON_LOGIN -> {
+                viewModel.dispatch(GlobalAction.Navigate(Screen.Chat.route))
+            }
+            Screen.PinCode.State.CHECK_ON_VISIBILITY -> {
+                viewModel.dispatch(PinCodeAction.ReverseSecretMessagesVisibility)
+            }
+            Screen.PinCode.State.CHECK_ON_SETTINGS -> {
+
+            }
+            else -> Unit
+        }
+    }
 }
 
 @Composable
@@ -140,10 +146,11 @@ private fun DeleteDatabaseDialog(
 private fun MainContent(
     state: AppState = AppState(),
     dictionary: Dictionary,
-    isPincCodeCheckScreen: Boolean = true,
+    pincodeScreenState: Screen.PinCode.State = Screen.PinCode.State.CHECK_ON_VISIBILITY,
     pincode: String = "",
     onButtonClick: (String) -> Unit = {},
     onDeleteClick: () -> Unit = {},
+    onBackClick: (() -> Unit) = {},
     onCantRememberClick: () -> Unit = {}
 ) {
     Column(
@@ -154,9 +161,15 @@ private fun MainContent(
             verticalArrangement = Arrangement.Center
         ) {
             Dots(pincode)
-            Numpad(onButtonClick, onDeleteClick)
+            Numpad(
+                dictionary = dictionary,
+                pincodeScreenState = pincodeScreenState,
+                onButtonClick = onButtonClick,
+                onDeleteClick = onDeleteClick,
+                onBackClick = onBackClick
+            )
         }
-        if (isPincCodeCheckScreen) {
+        if (pincodeScreenState == Screen.PinCode.State.CHECK_ON_LOGIN) {
             CantRememberPincodeMessage(dictionary, onCantRememberClick)
         }
     }
@@ -183,17 +196,23 @@ fun CantRememberPincodeMessage(
 
 @Composable
 private fun Numpad(
+    dictionary: Dictionary,
+    pincodeScreenState: Screen.PinCode.State,
     onButtonClick: (String) -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     PincodeRow("1", "2", "3", onButtonClick = onButtonClick)
     PincodeRow("4", "5", "6", onButtonClick = onButtonClick)
     PincodeRow("7", "8", "9", onButtonClick = onButtonClick)
+    val lastRowFirstText = "↩".takeIf { pincodeScreenState.isBackButtonVisible() }.orEmpty()
     PincodeRow(
+        firstText = lastRowFirstText,
         secondText = "0",
         thirdText = "⌫",
         onButtonClick = onButtonClick,
-        onDeleteClick = onDeleteClick
+        onDeleteClick = onDeleteClick,
+        onBackClick = onBackClick,
     )
 }
 
@@ -229,20 +248,23 @@ private fun PincodeRow(
     firstText: String = "",
     secondText: String = "",
     thirdText: String = "",
-    onButtonClick: (String) -> Unit = { _ -> },
-    onDeleteClick: (() -> Unit)? = null
+    onButtonClick: (String) -> Unit,
+    onDeleteClick: (() -> Unit)? = null,
+    onBackClick: (() -> Unit)? = null
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        PincodeButton(text = firstText, onClick = onButtonClick)
-        PincodeButton(text = secondText, onClick = onButtonClick)
-        if (onDeleteClick != null) {
-            PincodeButton(text = thirdText, onDeleteClick = onDeleteClick)
-        } else {
+        if (onDeleteClick == null || onBackClick == null) {
+            PincodeButton(text = firstText, onClick = onButtonClick)
+            PincodeButton(text = secondText, onClick = onButtonClick)
             PincodeButton(text = thirdText, onClick = onButtonClick)
+        } else {
+            PincodeButton(text = firstText, onBackClick = onBackClick)
+            PincodeButton(text = secondText, onClick = onButtonClick)
+            PincodeButton(text = thirdText, onDeleteClick = onDeleteClick)
         }
     }
 }
@@ -251,7 +273,8 @@ private fun PincodeRow(
 private fun PincodeButton(
     text: String = "",
     onClick: (String) -> Unit = {},
-    onDeleteClick: (() -> Unit)? = null
+    onDeleteClick: (() -> Unit)? = null,
+    onBackClick: (() -> Unit)? = null
 ) {
     if (text.isNotEmpty()) {
         Box(
@@ -265,6 +288,9 @@ private fun PincodeButton(
                         onClick(text)
                     }
                     onDeleteClick?.let {
+                        it()
+                    }
+                    onBackClick?.let {
                         it()
                     }
                 },
