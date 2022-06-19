@@ -24,16 +24,20 @@ import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.core.action.SettingsAction
+import ru.nightgoat.secretblog.providers.strings.Dictionary
+import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
 
 @Composable
 fun SettingsScreen(
     navController: NavController,
     viewModel: StoreViewModel,
     state: AppState,
-    sideEffect: BlogEffect
+    sideEffect: BlogEffect,
+    dictionary: Dictionary
 ) {
     MainContent(
         state = state,
+        dictionary = dictionary,
         onBackPressed = {
             viewModel.reduceSideEffect(BlogEffect.NavigateBack)
         },
@@ -55,28 +59,34 @@ fun SettingsScreen(
 @Composable
 private fun MainContent(
     state: AppState = AppState(),
+    dictionary: Dictionary = EnglishDictionary,
     onBackPressed: () -> Unit = {},
     onPincodeCheck: (Boolean) -> Unit = {}
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Toolbar("Settings") {
+        Toolbar(dictionary.settingsTitle) {
             onBackPressed()
         }
-        Settings(state, onPincodeCheck)
+        Settings(
+            state = state,
+            dictionary = dictionary,
+            onPincodeCheck = onPincodeCheck
+        )
     }
 }
 
 @Composable
 private fun Settings(
     state: AppState,
+    dictionary: Dictionary,
     onPincodeCheck: (Boolean) -> Unit
 ) {
     Column(
         modifier = Modifier.padding(defaultPadding)
     ) {
-        SettingsCheckBox("Pin code", state, onPincodeCheck)
+        SettingsCheckBox(dictionary.settingsPincodeOnEnterCheckBox, state, onPincodeCheck)
     }
 }
 

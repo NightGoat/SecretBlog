@@ -30,6 +30,13 @@ import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.core.action.PinCodeAction
+import ru.nightgoat.secretblog.providers.strings.Dictionary
+import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
+
+private const val pincodeMaxLength = 4
+private const val pincodeDotRadius = 16f
+private const val pinButtonBorderRadius = 2
+private const val pinButtonContainerSize = 64
 
 @Composable
 fun PinCodeScreen(
@@ -37,12 +44,15 @@ fun PinCodeScreen(
     viewModel: StoreViewModel,
     state: AppState,
     sideEffect: BlogEffect,
-    isPincodeCheckArg: String
+    isPincodeCheckArg: String,
+    dictionary: Dictionary
 ) {
     BackHandler {
 
     }
-    val isPincodeCheck = isPincodeCheckArg == Screen.PinCode.IS_PINCODE_CHECK
+    val isPincodeCheck = remember {
+        isPincodeCheckArg == Screen.PinCode.IS_PINCODE_CHECK
+    }
     var enteredPincode by remember { mutableStateOf("") }
     when (sideEffect) {
         is BlogEffect.PincodeCheckResult -> {
@@ -55,6 +65,7 @@ fun PinCodeScreen(
         }
         is BlogEffect.CannotRememberPinCodeDialog -> {
             DeleteDatabaseDialog(
+                dictionary = dictionary,
                 onCancelClick = {
                     viewModel.clearSideEffects()
                 },
@@ -63,9 +74,11 @@ fun PinCodeScreen(
                 }
             )
         }
+        else -> Unit
     }
     MainContent(
         state = state,
+        dictionary = dictionary,
         pincode = enteredPincode,
         isPincCodeCheckScreen = isPincodeCheck,
         onButtonClick = { buttonText ->
@@ -95,13 +108,14 @@ fun PinCodeScreen(
 
 @Composable
 private fun DeleteDatabaseDialog(
+    dictionary: Dictionary,
     onCancelClick: () -> Unit,
     onYesClick: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onCancelClick,
         title = {
-            Text("Warning!")
+            Text(dictionary.eraseAppDataAlertTitle)
         },
         buttons = {
             Row(
@@ -113,19 +127,19 @@ private fun DeleteDatabaseDialog(
                     modifier = Modifier.weight(0.5f),
                     onClick = onCancelClick,
                 ) {
-                    Text("No")
+                    Text(dictionary.no)
                 }
                 SimpleSpacer()
                 Button(
                     modifier = Modifier.weight(0.5f),
                     onClick = onYesClick
                 ) {
-                    Text("Yes")
+                    Text(dictionary.yes)
                 }
             }
         },
         text = {
-            Text(text = "This action will erase all data from app and let you in through pincode, do you wish to continue?")
+            Text(text = dictionary.eraseAppDataAlertMessage)
         }
     )
 }
@@ -133,6 +147,7 @@ private fun DeleteDatabaseDialog(
 @Composable
 private fun MainContent(
     state: AppState = AppState(),
+    dictionary: Dictionary,
     isPincCodeCheckScreen: Boolean = true,
     pincode: String = "",
     onButtonClick: (String) -> Unit = {},
@@ -150,7 +165,7 @@ private fun MainContent(
             Numpad(onButtonClick, onDeleteClick)
         }
         if (isPincCodeCheckScreen) {
-            CantRememberPincodeMessage(onCantRememberClick)
+            CantRememberPincodeMessage(dictionary, onCantRememberClick)
         }
     }
 
@@ -158,6 +173,7 @@ private fun MainContent(
 
 @Composable
 fun CantRememberPincodeMessage(
+    dictionary: Dictionary,
     onClick: () -> Unit
 ) {
     Text(
@@ -165,7 +181,7 @@ fun CantRememberPincodeMessage(
             .fillMaxWidth()
             .padding(bottom = 64.dp, top = 4.dp)
             .clickable(onClick = onClick),
-        text = "I cannot remember pincode",
+        text = dictionary.cannotRememberPin,
         color = AppColor.appleBlue,
         fontSize = 18.sp,
         fontWeight = FontWeight.Medium,
@@ -199,15 +215,15 @@ private fun Dots(pincode: String) {
         horizontalArrangement = Arrangement.Center
     ) {
         Canvas(modifier = Modifier) {
-            for (i in 0..3) {
-                val color = if (4 - pincodeLength <= i) {
+            for (i in 0 until pincodeMaxLength) {
+                val color = if (pincodeMaxLength - pincodeLength <= i) {
                     AppColor.appleBlue
                 } else {
                     Color.Gray
                 }
                 drawCircle(
                     color = color,
-                    radius = 16f,
+                    radius = pincodeDotRadius,
                     center = Offset(x = 96 - (i * 64f), y = 0f)
                 )
             }
@@ -249,9 +265,9 @@ private fun PincodeButton(
         Box(
             modifier = Modifier
                 .padding(defaultPadding)
-                .size(64.dp)
+                .size(pinButtonContainerSize.dp)
                 .clip(CircleShape)                       // clip to the circle shape
-                .border(2.dp, Color.Gray, CircleShape)
+                .border(pinButtonBorderRadius.dp, Color.Gray, CircleShape)
                 .clickable {
                     if (text.isNotEmpty() && onDeleteClick == null) {
                         onClick(text)
@@ -274,7 +290,7 @@ private fun PincodeButton(
         Box(
             modifier = Modifier
                 .padding(defaultPadding)
-                .size(64.dp)
+                .size(pinButtonContainerSize.dp)
         )
     }
 }
@@ -283,7 +299,8 @@ private fun PincodeButton(
 @Composable
 private fun PincodePreview() {
     MainContent(
-        AppState(),
+        state = AppState(),
+        dictionary = EnglishDictionary,
         pincode = "1"
     )
 }

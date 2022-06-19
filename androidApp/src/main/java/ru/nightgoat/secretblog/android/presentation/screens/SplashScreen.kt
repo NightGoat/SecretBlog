@@ -9,13 +9,15 @@ import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.BlogAction
 import ru.nightgoat.secretblog.core.action.GlobalAction
+import ru.nightgoat.secretblog.providers.strings.Dictionary
 
 @Composable
 fun SplashScreen(
     navController: NavController,
     viewModel: StoreViewModel,
     state: AppState,
-    sideEffect: BlogEffect
+    sideEffect: BlogEffect,
+    dictionary: Dictionary
 ) {
     LaunchedEffect(viewModel) {
         viewModel.dispatch(BlogAction.Start)

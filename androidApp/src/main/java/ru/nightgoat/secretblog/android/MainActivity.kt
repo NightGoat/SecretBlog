@@ -24,6 +24,7 @@ import ru.nightgoat.secretblog.android.presentation.screens.base.Screen.PinCode.
 import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.GlobalAction
+import ru.nightgoat.secretblog.providers.strings.StringProvider
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         Napier.d {
             "App start"
         }
+        val dictionary = StringProvider().provide()
         setContent {
             val navController = rememberNavController()
             val context = LocalContext.current
@@ -86,7 +88,8 @@ class MainActivity : AppCompatActivity() {
                         navController = navController,
                         viewModel = viewModel,
                         state = state,
-                        sideEffect = effects
+                        sideEffect = effects,
+                        dictionary = dictionary
                     )
                 }
                 composable(
@@ -101,7 +104,8 @@ class MainActivity : AppCompatActivity() {
                         state = state,
                         sideEffect = effects,
                         isPincodeCheckArg = backStackEntry.arguments?.getString(IS_PINCODE_CHECK_ARG)
-                            ?: "0"
+                            ?: Screen.PinCode.IS_PINCODE_SET,
+                        dictionary = dictionary
                     )
                 }
                 composable(Screen.Chat.route) {
@@ -109,7 +113,8 @@ class MainActivity : AppCompatActivity() {
                         navController = navController,
                         viewModel = viewModel,
                         state = state,
-                        effects = effects
+                        effects = effects,
+                        dictionary = dictionary
                     )
                 }
                 composable(Screen.Settings.route) {
@@ -117,7 +122,8 @@ class MainActivity : AppCompatActivity() {
                         navController = navController,
                         viewModel = viewModel,
                         state = state,
-                        sideEffect = effects
+                        sideEffect = effects,
+                        dictionary = dictionary
                     )
                 }
             }

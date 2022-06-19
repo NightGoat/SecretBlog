@@ -34,13 +34,15 @@ import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.models.BlogMessage
 import ru.nightgoat.secretblog.models.SecretBlogsState
+import ru.nightgoat.secretblog.providers.strings.Dictionary
 
 @Composable
 fun ChatScreen(
     navController: NavController,
     viewModel: StoreViewModel,
     state: AppState,
-    effects: BlogEffect
+    effects: BlogEffect,
+    dictionary: Dictionary
 ) {
     val listState = rememberLazyListState()
     when (effects) {

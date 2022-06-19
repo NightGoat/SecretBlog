@@ -4,9 +4,9 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSUserDomainMask
 
-actual class DbPathProvider {
+actual class DbPathProvider : Provider<String> {
 
-    actual fun provideDbPath(): String {
+    actual override fun provide(): String {
         return NSSearchPathForDirectoriesInDomains(
             NSDocumentDirectory,
             NSUserDomainMask,
