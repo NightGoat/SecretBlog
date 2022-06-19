@@ -57,7 +57,6 @@ fun ChatScreen(
         state = state,
         listState = listState,
         onSendMessageClick = viewModel::addMessage,
-        onClearButtonClick = viewModel::clearDB,
         onShowHideButtonClick = viewModel::reverseVisibility,
         onMessageSelect = viewModel::onMessageSelected,
         onLongPress = viewModel::reverseEditMode,
@@ -73,7 +72,6 @@ private fun MainContent(
     state: AppState = AppState(),
     listState: LazyListState = LazyListState(),
     onSendMessageClick: (String, Boolean) -> Unit = { _, _ -> },
-    onClearButtonClick: () -> Unit = {},
     onShowHideButtonClick: () -> Unit = {},
     onMessageSelect: (BlogMessage, Boolean) -> Unit = { _, _ -> },
     onLongPress: () -> Unit = {},
@@ -86,7 +84,6 @@ private fun MainContent(
         ) {
             Toolbar(
                 state = state,
-                onClearAllButtonClick = onClearButtonClick,
                 onShowHideButtonClick = onShowHideButtonClick,
                 onCancelSelectionClick = onLongPress,
                 onDeleteMessagesClick = onDeleteMessagesClick,
@@ -109,7 +106,6 @@ private fun MainContent(
 @Composable
 private fun Toolbar(
     state: AppState,
-    onClearAllButtonClick: () -> Unit,
     onDeleteMessagesClick: () -> Unit,
     onShowHideButtonClick: () -> Unit,
     onCancelSelectionClick: () -> Unit,
@@ -141,6 +137,15 @@ private fun Toolbar(
                     fontSize = 20.sp,
                     text = state.sizeOfSelectedMessages
                 )
+                Image(
+                    modifier = Modifier
+                        .clickable {
+                            onDeleteMessagesClick()
+                        }
+                        .padding(defaultPadding),
+                    painter = painterResource(id = R.drawable.ic_outline_delete_24),
+                    contentDescription = "Delete messages"
+                )
             } else {
                 Text(
                     modifier = Modifier.weight(1f),
@@ -148,19 +153,6 @@ private fun Toolbar(
                     text = stringResource(id = R.string.app_name)
                 )
             }
-            Image(
-                modifier = Modifier
-                    .clickable {
-                        if (state.isEdit) {
-                            onDeleteMessagesClick()
-                        } else {
-                            onClearAllButtonClick()
-                        }
-                    }
-                    .padding(defaultPadding),
-                painter = painterResource(id = R.drawable.ic_outline_delete_24),
-                contentDescription = "Delete all"
-            )
             SimpleSpacer()
             val hideDrawable = when (state.secretBlogsState) {
                 SecretBlogsState.VISIBLE -> R.drawable.ic_outline_visibility_off_24

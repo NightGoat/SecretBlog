@@ -10,6 +10,7 @@ sealed class BlogEffect : Effect {
     ) : BlogEffect()
 
     object CannotRememberPinCodeDialog : BlogEffect()
+    object DeleteAllMessagesDialog : BlogEffect()
 
     data class Error(val error: Exception) : BlogEffect()
     data class Toast(

@@ -4,4 +4,5 @@ import ru.nightgoat.secretblog.core.Action
 
 sealed class SettingsAction : Action {
     object TurnOffPincode : SettingsAction()
+    object ClearAllMessages : SettingsAction()
 }

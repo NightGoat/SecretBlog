@@ -6,8 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ru.nightgoat.secretblog.android.presentation.AppColor
-import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
+import ru.nightgoat.secretblog.android.presentation.composables.AppAlert
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.core.AppState
@@ -112,35 +110,13 @@ private fun DeleteDatabaseDialog(
     onCancelClick: () -> Unit,
     onYesClick: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onCancelClick,
-        title = {
-            Text(dictionary.eraseAppDataAlertTitle)
-        },
-        buttons = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(defaultPadding),
-            ) {
-                Button(
-                    modifier = Modifier.weight(0.5f),
-                    onClick = onCancelClick,
-                ) {
-                    Text(dictionary.no)
-                }
-                SimpleSpacer()
-                Button(
-                    modifier = Modifier.weight(0.5f),
-                    onClick = onYesClick
-                ) {
-                    Text(dictionary.yes)
-                }
-            }
-        },
-        text = {
-            Text(text = dictionary.eraseAppDataAlertMessage)
-        }
+    AppAlert(
+        title = dictionary.eraseAppDataAlertTitle,
+        message = dictionary.eraseAppDataAlertMessage,
+        leftButtonText = dictionary.no,
+        rightButtonText = dictionary.yes,
+        onLeftButtonClick = onCancelClick,
+        onRightButtonClick = onYesClick
     )
 }
 

@@ -16,12 +16,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ru.nightgoat.secretblog.android.R
+import ru.nightgoat.secretblog.android.presentation.composables.AppAlert
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
+import ru.nightgoat.secretblog.core.action.BlogAction
 import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.core.action.SettingsAction
 import ru.nightgoat.secretblog.providers.strings.Dictionary
@@ -35,6 +37,21 @@ fun SettingsScreen(
     sideEffect: BlogEffect,
     dictionary: Dictionary
 ) {
+    when (sideEffect) {
+        is BlogEffect.DeleteAllMessagesDialog -> {
+            DeleteAllMesagesDialog(
+                dictionary = dictionary,
+                onNoClick = {
+                    viewModel.clearSideEffects()
+                },
+                onYesClick = {
+                    viewModel.dispatch(BlogAction.ClearDB)
+                }
+            )
+        }
+        else -> Unit
+    }
+
     MainContent(
         state = state,
         dictionary = dictionary,
@@ -52,7 +69,26 @@ fun SettingsScreen(
             } else {
                 viewModel.dispatch(SettingsAction.TurnOffPincode)
             }
+        },
+        onDeleteAllMessagesButton = {
+            viewModel.dispatch(SettingsAction.ClearAllMessages)
         }
+    )
+}
+
+@Composable
+private fun DeleteAllMesagesDialog(
+    dictionary: Dictionary,
+    onNoClick: () -> Unit,
+    onYesClick: () -> Unit
+) {
+    AppAlert(
+        title = dictionary.deleteAllMessagesAlertTitle,
+        message = dictionary.deleteAllMessagesAlertMessage,
+        leftButtonText = dictionary.no,
+        rightButtonText = dictionary.yes,
+        onLeftButtonClick = onNoClick,
+        onRightButtonClick = onYesClick
     )
 }
 
@@ -61,7 +97,8 @@ private fun MainContent(
     state: AppState = AppState(),
     dictionary: Dictionary = EnglishDictionary,
     onBackPressed: () -> Unit = {},
-    onPincodeCheck: (Boolean) -> Unit = {}
+    onPincodeCheck: (Boolean) -> Unit = {},
+    onDeleteAllMessagesButton: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -72,7 +109,8 @@ private fun MainContent(
         Settings(
             state = state,
             dictionary = dictionary,
-            onPincodeCheck = onPincodeCheck
+            onPincodeCheck = onPincodeCheck,
+            onDeleteAllMessagesButton = onDeleteAllMessagesButton
         )
     }
 }
@@ -81,12 +119,18 @@ private fun MainContent(
 private fun Settings(
     state: AppState,
     dictionary: Dictionary,
-    onPincodeCheck: (Boolean) -> Unit
+    onPincodeCheck: (Boolean) -> Unit,
+    onDeleteAllMessagesButton: () -> Unit,
 ) {
     Column(
         modifier = Modifier.padding(defaultPadding)
     ) {
         SettingsCheckBox(dictionary.settingsPincodeOnEnterCheckBox, state, onPincodeCheck)
+        SettingsButton(
+            text = dictionary.deleteAllMessages,
+            imageId = R.drawable.ic_outline_delete_24,
+            onClick = onDeleteAllMessagesButton
+        )
     }
 }
 
@@ -102,6 +146,7 @@ private fun SettingsCheckBox(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
+            .padding(defaultPadding)
             .clickable {
                 onCheckBoxClick(!isPinCodeSet)
             }
@@ -113,6 +158,35 @@ private fun SettingsCheckBox(
         Checkbox(
             checked = isPinCodeSet,
             onCheckedChange = onCheckBoxClick
+        )
+    }
+}
+
+@Composable
+private fun SettingsButton(
+    text: String,
+    imageId: Int,
+    contentDescription: String = "",
+    onClick: () -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(defaultPadding)
+            .clickable {
+                onClick()
+            }
+    ) {
+        Text(
+            modifier = Modifier.padding(start = defaultPadding),
+            text = text
+        )
+        Image(
+            modifier = Modifier.padding(end = 12.dp),
+            painter = painterResource(id = imageId),
+            contentDescription = contentDescription
         )
     }
 }

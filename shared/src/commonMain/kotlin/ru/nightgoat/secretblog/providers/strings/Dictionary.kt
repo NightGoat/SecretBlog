@@ -17,6 +17,9 @@ interface Dictionary {
     //Settings
     val settingsTitle: String
     val settingsPincodeOnEnterCheckBox: String
+    val deleteAllMessages: String
+    val deleteAllMessagesAlertTitle: String
+    val deleteAllMessagesAlertMessage: String
 
     //Chat
 
