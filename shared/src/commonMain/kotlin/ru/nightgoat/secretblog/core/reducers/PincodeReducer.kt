@@ -13,7 +13,7 @@ fun StoreViewModel.pincodeReducer(action: PinCodeAction, oldState: AppState) {
             launch {
                 val isPincodeCorrect = settingsProvider.isPinCodeCorrect(action.pincodeToCheck)
                 val effect = BlogEffect.PincodeCheckResult(isPincodeCorrect)
-                sideEffect.emit(effect)
+                reduceSideEffect(effect)
                 if (!isPincodeCorrect) {
                     sideEffect.emit(BlogEffect.Toast("Wrong pincode!"))
                 }
@@ -29,6 +29,12 @@ fun StoreViewModel.pincodeReducer(action: PinCodeAction, oldState: AppState) {
         is PinCodeAction.CannotRememberPinCode -> {
             launch {
                 sideEffect.emit(BlogEffect.CannotRememberPinCodeDialog)
+            }
+        }
+        is PinCodeAction.ReverseSecretMessagesVisibility -> {
+            launch {
+                state.value = oldState.reversedVisibility
+                reduceSideEffect(BlogEffect.NavigateBack)
             }
         }
     }

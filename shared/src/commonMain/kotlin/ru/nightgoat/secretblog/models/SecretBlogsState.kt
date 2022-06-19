@@ -7,4 +7,7 @@ enum class SecretBlogsState {
         VISIBLE -> HIDDEN
         else -> VISIBLE
     }
+
+    fun isVisible() = this == VISIBLE
+    fun isHidden() = this == HIDDEN
 }

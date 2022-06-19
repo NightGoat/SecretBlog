@@ -9,6 +9,7 @@ sealed class Screen {
 
     object PinCode : Screen() {
         const val IS_PINCODE_CHECK_ARG = "isPincodeCheck"
+        const val IS_PINCODE_CHECK_ON_SECRET_VISIBILITY = "3"
         const val IS_PINCODE_CHECK = "1"
         const val IS_PINCODE_SET = "0"
         override val route = PIN_CODE_ROUTE

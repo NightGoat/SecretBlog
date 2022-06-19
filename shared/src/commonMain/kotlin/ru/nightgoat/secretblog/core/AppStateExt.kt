@@ -6,6 +6,10 @@ fun AppState.setPincode(isSet: Boolean) = this.copy(
     settings = this.settings.copy(isPinCodeSet = isSet)
 )
 
+fun AppState.setVisibilityPincode(isSet: Boolean) = this.copy(
+    settings = this.settings.copy(isPinOnSecretVisibilitySet = isSet)
+)
+
 fun AppState.turnOffEditMode() = this.copy(
     isEdit = false,
     blogMessages = blogMessages.map {

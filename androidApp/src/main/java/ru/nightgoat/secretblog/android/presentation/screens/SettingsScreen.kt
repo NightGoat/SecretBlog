@@ -1,5 +1,6 @@
 package ru.nightgoat.secretblog.android.presentation.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -58,7 +59,7 @@ fun SettingsScreen(
         onBackPressed = {
             viewModel.reduceSideEffect(BlogEffect.NavigateBack)
         },
-        onPincodeCheck = { isChecked ->
+        onPinOnLoginCheck = { isChecked ->
             if (isChecked) {
                 viewModel.dispatch(
                     GlobalAction.Navigate(
@@ -69,6 +70,14 @@ fun SettingsScreen(
             } else {
                 viewModel.dispatch(SettingsAction.TurnOffPincode)
             }
+        },
+        onPinSecretVisibilityCheck = { isChecked ->
+            val action = if (isChecked) {
+                SettingsAction.TurnOnOnSecretVisibilityPin
+            } else {
+                SettingsAction.TurnOffOnSecretVisibilityPin
+            }
+            viewModel.dispatch(action)
         },
         onDeleteAllMessagesButton = {
             viewModel.dispatch(SettingsAction.ClearAllMessages)
@@ -94,10 +103,15 @@ private fun DeleteAllMesagesDialog(
 
 @Composable
 private fun MainContent(
-    state: AppState = AppState(),
+    state: AppState = AppState(
+        settings = ru.nightgoat.secretblog.models.Settings(
+            isPinCodeSet = true, isPinOnSecretVisibilitySet = true
+        )
+    ),
     dictionary: Dictionary = EnglishDictionary,
     onBackPressed: () -> Unit = {},
-    onPincodeCheck: (Boolean) -> Unit = {},
+    onPinOnLoginCheck: (Boolean) -> Unit = {},
+    onPinSecretVisibilityCheck: (Boolean) -> Unit = {},
     onDeleteAllMessagesButton: () -> Unit = {}
 ) {
     Column(
@@ -109,7 +123,8 @@ private fun MainContent(
         Settings(
             state = state,
             dictionary = dictionary,
-            onPincodeCheck = onPincodeCheck,
+            onPinOnLoginCheck = onPinOnLoginCheck,
+            onPinSecretVisibilityCheck = onPinSecretVisibilityCheck,
             onDeleteAllMessagesButton = onDeleteAllMessagesButton
         )
     }
@@ -119,13 +134,27 @@ private fun MainContent(
 private fun Settings(
     state: AppState,
     dictionary: Dictionary,
-    onPincodeCheck: (Boolean) -> Unit,
+    onPinOnLoginCheck: (Boolean) -> Unit,
+    onPinSecretVisibilityCheck: (Boolean) -> Unit,
     onDeleteAllMessagesButton: () -> Unit,
 ) {
     Column(
         modifier = Modifier.padding(defaultPadding)
     ) {
-        SettingsCheckBox(dictionary.settingsPincodeOnEnterCheckBox, state, onPincodeCheck)
+        SettingsCheckBox(
+            text = dictionary.settingsPincodeOnEnterCheckBox,
+            state = state,
+            isChecked = state.settings.isPinCodeSet,
+            onCheckBoxClick = onPinOnLoginCheck
+        )
+        AnimatedVisibility(state.settings.isPinCodeSet) {
+            SettingsCheckBox(
+                text = dictionary.settingsPincodeSecretVisibilityCheckBox,
+                state = state,
+                isChecked = state.settings.isPinOnSecretVisibilitySet,
+                onCheckBoxClick = onPinSecretVisibilityCheck
+            )
+        }
         SettingsButton(
             text = dictionary.deleteAllMessages,
             imageId = R.drawable.ic_outline_delete_24,
@@ -138,17 +167,16 @@ private fun Settings(
 private fun SettingsCheckBox(
     text: String,
     state: AppState,
+    isChecked: Boolean,
     onCheckBoxClick: (Boolean) -> Unit
 ) {
-    val isPinCodeSet = state.settings.isPinCodeSet
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(defaultPadding)
             .clickable {
-                onCheckBoxClick(!isPinCodeSet)
+                onCheckBoxClick(!isChecked)
             }
     ) {
         Text(
@@ -156,7 +184,7 @@ private fun SettingsCheckBox(
             text = text
         )
         Checkbox(
-            checked = isPinCodeSet,
+            checked = isChecked,
             onCheckedChange = onCheckBoxClick
         )
     }
@@ -174,7 +202,7 @@ private fun SettingsButton(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(defaultPadding)
+            .padding(top = defaultPadding)
             .clickable {
                 onClick()
             }

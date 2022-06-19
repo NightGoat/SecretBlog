@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import io.github.aakira.napier.Napier
 import ru.nightgoat.secretblog.android.presentation.AppColor
 import ru.nightgoat.secretblog.android.presentation.composables.AppAlert
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
@@ -48,16 +49,31 @@ fun PinCodeScreen(
     BackHandler {
 
     }
-    val isPincodeCheck = remember {
-        isPincodeCheckArg == Screen.PinCode.IS_PINCODE_CHECK
-    }
+    val isPincodeCheck = isPincodeCheckArg == Screen.PinCode.IS_PINCODE_CHECK
+    val isPinOnVisibilityCheck =
+        isPincodeCheckArg == Screen.PinCode.IS_PINCODE_CHECK_ON_SECRET_VISIBILITY
     var enteredPincode by remember { mutableStateOf("") }
     when (sideEffect) {
         is BlogEffect.PincodeCheckResult -> {
             LaunchedEffect(enteredPincode) {
                 val isPincodeCorrect = sideEffect.isPincodeRight
-                if (isPincodeCorrect) {
-                    viewModel.dispatch(GlobalAction.Navigate(Screen.Chat.route))
+                when {
+                    isPincodeCheck && isPincodeCorrect -> {
+                        Napier.e {
+                            """
+                                IN PIN CODE CHECK
+                            """.trimIndent()
+                        }
+                        viewModel.dispatch(GlobalAction.Navigate(Screen.Chat.route))
+                    }
+                    isPinOnVisibilityCheck && isPincodeCorrect -> {
+                        Napier.e {
+                            """
+                                IN PIN CODE VISIBILITY CHECK
+                            """.trimIndent()
+                        }
+                        viewModel.dispatch(PinCodeAction.ReverseSecretMessagesVisibility)
+                    }
                 }
             }
         }
@@ -78,17 +94,17 @@ fun PinCodeScreen(
         state = state,
         dictionary = dictionary,
         pincode = enteredPincode,
-        isPincCodeCheckScreen = isPincodeCheck,
+        isPincCodeCheckScreen = isPincodeCheck || isPinOnVisibilityCheck,
         onButtonClick = { buttonText ->
             val newPincode = enteredPincode.plus(buttonText)
             enteredPincode = newPincode
-            val isPincodeMax = newPincode.length >= 4
+            val isPincodeMax = newPincode.length >= pincodeMaxLength
             when {
-                isPincodeMax && !isPincodeCheck -> {
+                isPincodeMax && !(isPincodeCheck || isPinOnVisibilityCheck) -> {
                     viewModel.dispatch(PinCodeAction.SetPincode(enteredPincode))
                     enteredPincode = ""
                 }
-                isPincodeMax && isPincodeCheck -> {
+                isPincodeMax && (isPincodeCheck || isPinOnVisibilityCheck) -> {
                     viewModel.dispatch(PinCodeAction.CheckPincode(enteredPincode))
                     enteredPincode = ""
                 }

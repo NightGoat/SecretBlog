@@ -12,4 +12,5 @@ sealed class PinCodeAction : Action {
     ) : PinCodeAction()
 
     object CannotRememberPinCode : PinCodeAction()
+    object ReverseSecretMessagesVisibility : PinCodeAction()
 }

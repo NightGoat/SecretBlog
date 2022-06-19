@@ -57,7 +57,18 @@ fun ChatScreen(
         state = state,
         listState = listState,
         onSendMessageClick = viewModel::addMessage,
-        onShowHideButtonClick = viewModel::reverseVisibility,
+        onShowHideButtonClick = {
+            if (state.settings.isPinOnSecretVisibilitySet && state.secretBlogsState.isHidden()) {
+                viewModel.dispatch(
+                    GlobalAction.Navigate(
+                        Screen.PinCode.route,
+                        Screen.PinCode.IS_PINCODE_CHECK_ON_SECRET_VISIBILITY
+                    )
+                )
+            } else {
+                viewModel.reverseVisibility()
+            }
+        },
         onMessageSelect = viewModel::onMessageSelected,
         onLongPress = viewModel::reverseEditMode,
         onDeleteMessagesClick = viewModel::deleteSelectedMessages,

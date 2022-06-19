@@ -1,11 +1,8 @@
 package ru.nightgoat.secretblog.core.reducers
 
 import kotlinx.coroutines.launch
-import ru.nightgoat.secretblog.core.AppState
-import ru.nightgoat.secretblog.core.BlogEffect
-import ru.nightgoat.secretblog.core.StoreViewModel
+import ru.nightgoat.secretblog.core.*
 import ru.nightgoat.secretblog.core.action.SettingsAction
-import ru.nightgoat.secretblog.core.setPincode
 
 fun StoreViewModel.settingsReducer(
     action: SettingsAction,
@@ -20,6 +17,14 @@ fun StoreViewModel.settingsReducer(
             launch {
                 sideEffect.emit(BlogEffect.DeleteAllMessagesDialog)
             }
+        }
+        SettingsAction.TurnOffOnSecretVisibilityPin -> {
+            settingsProvider.isPinOnSecretVisibilitySet = false
+            state.value = oldState.setVisibilityPincode(false)
+        }
+        SettingsAction.TurnOnOnSecretVisibilityPin -> {
+            settingsProvider.isPinOnSecretVisibilitySet = true
+            state.value = oldState.setVisibilityPincode(true)
         }
     }
 
