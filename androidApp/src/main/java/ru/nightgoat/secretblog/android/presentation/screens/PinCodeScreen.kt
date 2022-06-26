@@ -1,6 +1,8 @@
 package ru.nightgoat.secretblog.android.presentation.screens
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,9 +32,12 @@ import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.core.action.PinCodeAction
 import ru.nightgoat.secretblog.providers.strings.Dictionary
 import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
+import ru.nightgoat.secretblog.utils.GlobalConstants
 
 private const val pincodeMaxLength = 4
 private const val pincodeDotRadius = 16f
+private const val pincodeDotRadiusFilledSpringMin = 20f
+private const val pincodeDotRadiusFilledSpringMax = 24f
 private const val pinButtonBorderRadius = 2
 private const val pinButtonContainerSize = 64
 
@@ -70,6 +75,9 @@ fun PinCodeScreen(
                 }
             )
         }
+        is BlogEffect.DropEnteredPincodeToEmpty -> {
+            enteredPincode = ""
+        }
         else -> Unit
     }
     MainContent(
@@ -84,11 +92,9 @@ fun PinCodeScreen(
             when {
                 isPincodeMax && pincodeScreenState == Screen.PinCode.State.SET -> {
                     viewModel.dispatch(PinCodeAction.SetPincode(enteredPincode))
-                    enteredPincode = ""
                 }
                 isPincodeMax && pincodeScreenState != Screen.PinCode.State.SET -> {
                     viewModel.dispatch(PinCodeAction.CheckPincode(enteredPincode))
-                    enteredPincode = ""
                 }
             }
         },
@@ -219,6 +225,18 @@ private fun Numpad(
 @Composable
 private fun Dots(pincode: String) {
     val pincodeLength = pincode.length
+    val animateFloat = remember { Animatable(0f) }
+    val filledPincodeDots = pincodeMaxLength - pincodeLength
+    LaunchedEffect(pincodeLength) {
+        animateFloat.animateTo(
+            targetValue = (pincodeDotRadiusFilledSpringMax - pincodeDotRadius),
+            animationSpec = tween(GlobalConstants.PIN_CODE_DROP_TO_EMPTY_DELAY.toInt() / 2)
+        )
+        animateFloat.animateTo(
+            targetValue = (pincodeDotRadiusFilledSpringMin - pincodeDotRadius),
+            animationSpec = tween(GlobalConstants.PIN_CODE_DROP_TO_EMPTY_DELAY.toInt() / 2)
+        )
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -227,21 +245,33 @@ private fun Dots(pincode: String) {
     ) {
         Canvas(modifier = Modifier) {
             for (i in 0 until pincodeMaxLength) {
-                val color = if (pincodeMaxLength - pincodeLength <= i) {
-                    AppColor.appleBlue
-                } else {
-                    Color.Gray
+                val offset = Offset(x = getDotXOffset(i), y = 0f)
+                val isDotFilled = filledPincodeDots <= i
+                var radius = pincodeDotRadius
+                var color = Color.Gray
+                val isLastFilledPin = i == filledPincodeDots
+                when {
+                    isDotFilled && isLastFilledPin -> {
+                        radius += animateFloat.value
+                        color = AppColor.appleBlue
+                    }
+                    isDotFilled -> {
+                        radius = pincodeDotRadiusFilledSpringMin
+                        color = AppColor.appleBlue
+                    }
                 }
                 drawCircle(
                     color = color,
-                    radius = pincodeDotRadius,
-                    center = Offset(x = 96 - (i * 64f), y = 0f)
+                    radius = radius,
+                    center = offset
                 )
             }
         }
     }
 }
 
+private fun getDotXOffset(dotIndex: Int) =
+    (pincodeDotRadius * 6) - (dotIndex * (pincodeDotRadius * 4))
 
 @Composable
 private fun PincodeRow(

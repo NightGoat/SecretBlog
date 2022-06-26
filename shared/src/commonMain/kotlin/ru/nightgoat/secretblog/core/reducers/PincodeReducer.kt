@@ -1,11 +1,13 @@
 package ru.nightgoat.secretblog.core.reducers
 
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.PinCodeAction
 import ru.nightgoat.secretblog.core.setPincode
+import ru.nightgoat.secretblog.utils.GlobalConstants.PIN_CODE_DROP_TO_EMPTY_DELAY
 
 fun StoreViewModel.pincodeReducer(action: PinCodeAction, oldState: AppState) {
     when (action) {
@@ -16,6 +18,8 @@ fun StoreViewModel.pincodeReducer(action: PinCodeAction, oldState: AppState) {
                 reduceSideEffect(effect)
                 if (!isPincodeCorrect) {
                     sideEffect.emit(BlogEffect.Toast("Wrong pincode!"))
+                    delay(PIN_CODE_DROP_TO_EMPTY_DELAY)
+                    reduceSideEffect(BlogEffect.DropEnteredPincodeToEmpty)
                 }
             }
         }

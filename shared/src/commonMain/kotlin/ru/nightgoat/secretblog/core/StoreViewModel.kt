@@ -16,6 +16,7 @@ import ru.nightgoat.secretblog.core.reducers.mainReducer
 import ru.nightgoat.secretblog.data.DataBase
 import ru.nightgoat.secretblog.models.BlogMessage
 import ru.nightgoat.secretblog.providers.SettingsProvider
+import ru.nightgoat.secretblog.utils.GlobalConstants.SIDE_EFFECT_DELAY
 
 class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatchers.Main),
     Store<AppState, Action, BlogEffect> {
@@ -86,7 +87,7 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
     fun reduceSideEffect(effect: BlogEffect) {
         launch {
             sideEffect.emit(effect)
-            delay(100)
+            delay(SIDE_EFFECT_DELAY)
             sideEffect.emit(BlogEffect.Empty)
         }
     }
