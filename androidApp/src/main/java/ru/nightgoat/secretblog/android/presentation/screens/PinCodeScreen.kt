@@ -37,7 +37,7 @@ import ru.nightgoat.secretblog.utils.GlobalConstants
 private const val pincodeMaxLength = 4
 private const val pincodeDotRadius = 16f
 private const val pincodeDotRadiusFilledSpringMin = 20f
-private const val pincodeDotRadiusFilledSpringMax = 24f
+private const val pincodeDotRadiusFilledSpringMax = 26f
 private const val pinButtonBorderRadius = 2
 private const val pinButtonContainerSize = 64
 
@@ -230,11 +230,11 @@ private fun Dots(pincode: String) {
     LaunchedEffect(pincodeLength) {
         animateFloat.animateTo(
             targetValue = (pincodeDotRadiusFilledSpringMax - pincodeDotRadius),
-            animationSpec = tween(GlobalConstants.PIN_CODE_DROP_TO_EMPTY_DELAY.toInt() / 2)
+            animationSpec = tween(GlobalConstants.PIN_CODE_TWEEN_TIME / 2)
         )
         animateFloat.animateTo(
             targetValue = (pincodeDotRadiusFilledSpringMin - pincodeDotRadius),
-            animationSpec = tween(GlobalConstants.PIN_CODE_DROP_TO_EMPTY_DELAY.toInt() / 2)
+            animationSpec = tween(GlobalConstants.PIN_CODE_TWEEN_TIME / 2)
         )
     }
     Row(
