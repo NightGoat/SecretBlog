@@ -2,13 +2,16 @@ package ru.nightgoat.secretblog.android.presentation.composables
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import ru.nightgoat.secretblog.android.presentation.defaultPadding
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import ru.nightgoat.secretblog.android.presentation.BlogTheme
 
 
 @Composable
@@ -29,17 +32,21 @@ fun AppAlert(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(defaultPadding),
+                    .padding(16.dp),
             ) {
                 Button(
-                    modifier = Modifier.weight(0.5f),
+                    modifier = Modifier
+                        .height(48.dp)
+                        .weight(0.5f),
                     onClick = onLeftButtonClick,
                 ) {
                     Text(leftButtonText)
                 }
-                SimpleSpacer()
+                SimpleSpacer(8)
                 Button(
-                    modifier = Modifier.weight(0.5f),
+                    modifier = Modifier
+                        .height(48.dp)
+                        .weight(0.5f),
                     onClick = onRightButtonClick
                 ) {
                     Text(rightButtonText)
@@ -50,4 +57,20 @@ fun AppAlert(
             Text(text = message)
         }
     )
+}
+
+@Preview
+@Composable
+fun AlertPreview() {
+    BlogTheme {
+        AppAlert(
+            title = "Hello world",
+            message = "Indeed hello world",
+            leftButtonText = "No",
+            rightButtonText = "Yes",
+            onLeftButtonClick = { }) {
+
+        }
+
+    }
 }

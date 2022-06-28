@@ -8,13 +8,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ru.nightgoat.secretblog.android.presentation.AppColor
+import ru.nightgoat.secretblog.android.presentation.BlogTheme
 import ru.nightgoat.secretblog.android.presentation.composables.AppAlert
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
@@ -159,27 +161,30 @@ private fun MainContent(
     onBackClick: (() -> Unit) = {},
     onCantRememberClick: () -> Unit = {}
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-    ) {
+    Surface(color = MaterialTheme.colors.primary) {
         Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Dots(pincode)
-            Numpad(
-                dictionary = dictionary,
-                pincodeScreenState = pincodeScreenState,
-                onButtonClick = onButtonClick,
-                onDeleteClick = onDeleteClick,
-                onBackClick = onBackClick
-            )
-        }
-        if (pincodeScreenState == Screen.PinCode.State.CHECK_ON_LOGIN) {
-            CantRememberPincodeMessage(dictionary, onCantRememberClick)
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                Dots(pincode)
+                Numpad(
+                    dictionary = dictionary,
+                    pincodeScreenState = pincodeScreenState,
+                    onButtonClick = onButtonClick,
+                    onDeleteClick = onDeleteClick,
+                    onBackClick = onBackClick
+                )
+            }
+            if (pincodeScreenState == Screen.PinCode.State.CHECK_ON_LOGIN) {
+                CantRememberPincodeMessage(dictionary, onCantRememberClick)
+            }
         }
     }
-
 }
 
 @Composable
@@ -190,10 +195,10 @@ fun CantRememberPincodeMessage(
     Text(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 64.dp, top = 4.dp)
+            .padding(bottom = 64.dp, top = 64.dp)
             .clickable(onClick = onClick),
         text = dictionary.cannotRememberPin,
-        color = AppColor.appleBlue,
+        color = AppColor.elephantBone,
         fontSize = 18.sp,
         fontWeight = FontWeight.Medium,
         textAlign = TextAlign.Center
@@ -248,16 +253,16 @@ private fun Dots(pincode: String) {
                 val offset = Offset(x = getDotXOffset(i), y = 0f)
                 val isDotFilled = filledPincodeDots <= i
                 var radius = pincodeDotRadius
-                var color = Color.Gray
+                var color = AppColor.elephantBone
                 val isLastFilledPin = i == filledPincodeDots
                 when {
                     isDotFilled && isLastFilledPin -> {
                         radius += animateFloat.value
-                        color = AppColor.appleBlue
+                        color = AppColor.beige
                     }
                     isDotFilled -> {
                         radius = pincodeDotRadiusFilledSpringMin
-                        color = AppColor.appleBlue
+                        color = AppColor.beige
                     }
                 }
                 drawCircle(
@@ -311,8 +316,8 @@ private fun PincodeButton(
             modifier = Modifier
                 .padding(defaultPadding)
                 .size(pinButtonContainerSize.dp)
-                .clip(CircleShape)                       // clip to the circle shape
-                .border(pinButtonBorderRadius.dp, Color.Gray, CircleShape)
+                .clip(CircleShape)
+                .border(pinButtonBorderRadius.dp, AppColor.beige, CircleShape)
                 .clickable {
                     if (text.isNotEmpty() && onDeleteClick == null) {
                         onClick(text)
@@ -346,9 +351,12 @@ private fun PincodeButton(
 @Preview(showBackground = true)
 @Composable
 private fun PincodePreview() {
-    MainContent(
-        state = AppState(),
-        dictionary = EnglishDictionary,
-        pincode = "1"
-    )
+    BlogTheme {
+        MainContent(
+            state = AppState(),
+            dictionary = EnglishDictionary,
+            pincode = "1",
+            pincodeScreenState = Screen.PinCode.State.CHECK_ON_LOGIN
+        )
+    }
 }

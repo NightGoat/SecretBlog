@@ -3,28 +3,33 @@ package ru.nightgoat.secretblog.android.presentation.screens
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ru.nightgoat.secretblog.android.R
+import ru.nightgoat.secretblog.android.presentation.AppColor
+import ru.nightgoat.secretblog.android.presentation.BlogTheme
+import ru.nightgoat.secretblog.android.presentation.composables.AppIcon
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
@@ -89,7 +94,6 @@ private fun MainContent(
     onDeleteMessagesClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {}
 ) {
-    Surface(color = Color.LightGray) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -111,7 +115,6 @@ private fun MainContent(
                 onSendMessageClick(message, isSecret)
             }
         }
-    }
 }
 
 @Composable
@@ -124,7 +127,7 @@ private fun Toolbar(
 ) {
     Surface(
         elevation = 4.dp,
-        color = Color.White
+        color = MaterialTheme.colors.primary
     ) {
         Row(
             modifier = Modifier
@@ -133,30 +136,24 @@ private fun Toolbar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (state.isEdit) {
-                Image(
-                    modifier = Modifier
-                        .clickable {
-                            onCancelSelectionClick()
-                        }
-                        .padding(defaultPadding),
-                    painter = painterResource(id = R.drawable.ic_outline_cancel_24),
+                AppIcon(
+                    drawableId = R.drawable.ic_outline_cancel_24,
                     contentDescription = "Cancel selection"
-                )
+                ) {
+                    onCancelSelectionClick()
+                }
                 SimpleSpacer(16)
                 Text(
                     modifier = Modifier.weight(1f),
                     fontSize = 20.sp,
                     text = state.sizeOfSelectedMessages
                 )
-                Image(
-                    modifier = Modifier
-                        .clickable {
-                            onDeleteMessagesClick()
-                        }
-                        .padding(defaultPadding),
-                    painter = painterResource(id = R.drawable.ic_outline_delete_24),
+                AppIcon(
+                    drawableId = R.drawable.ic_outline_delete_24,
                     contentDescription = "Delete messages"
-                )
+                ) {
+                    onDeleteMessagesClick()
+                }
             } else {
                 Text(
                     modifier = Modifier.weight(1f),
@@ -169,25 +166,19 @@ private fun Toolbar(
                 SecretBlogsState.VISIBLE -> R.drawable.ic_outline_visibility_off_24
                 SecretBlogsState.HIDDEN -> R.drawable.ic_outline_visibility_24
             }
-            Image(
-                modifier = Modifier
-                    .clickable {
-                        onShowHideButtonClick()
-                    }
-                    .padding(defaultPadding),
-                painter = painterResource(id = hideDrawable),
+            AppIcon(
+                drawableId = hideDrawable,
                 contentDescription = "show / hide secret blogs"
-            )
+            ) {
+                onShowHideButtonClick()
+            }
             SimpleSpacer()
-            Image(
-                modifier = Modifier
-                    .clickable {
-                        onSettingsClick()
-                    }
-                    .padding(defaultPadding),
-                painter = painterResource(id = R.drawable.ic_outline_settings_24),
+            AppIcon(
+                drawableId = R.drawable.ic_outline_settings_24,
                 contentDescription = "settings"
-            )
+            ) {
+                onSettingsClick()
+            }
         }
     }
 }
@@ -259,13 +250,12 @@ private fun MessageCard(
     onMessageSelect: (BlogMessage, Boolean) -> Unit,
     onLongPress: () -> Unit
 ) {
-    var backgroundColor = Color.White
-    var textColor = Color.Black
+    var backgroundColor = AppColor.elephantBone
+    val textColor = Color.Black
     var timeStampColor = Color.DarkGray
     if (message.isSecret) {
-        backgroundColor = MaterialTheme.colors.primary
-        textColor = Color.White
-        timeStampColor = Color.White
+        backgroundColor = MaterialTheme.colors.primaryVariant
+        timeStampColor = Color.Black
     }
     Card(
         modifier = Modifier
@@ -296,55 +286,65 @@ private fun InputToolbar(
     onSendMessageClick: (String, Boolean) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
-    Row(
-        modifier = Modifier
-            .background(Color.White)
-            .fillMaxWidth()
-            .padding(defaultPadding),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        TextField(
+    Surface(elevation = 4.dp) {
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .padding(end = defaultPadding),
-            value = text,
-            onValueChange = {
-                text = it
-            })
-        Image(
-            modifier = Modifier
-                .clickable {
-                    onSendMessageClick(text, true)
-                    text = ""
-                }
+                .background(MaterialTheme.colors.primary)
+                .fillMaxWidth()
                 .padding(defaultPadding),
-            painter = painterResource(id = R.drawable.ic_outline_cancel_schedule_send_24),
-            contentDescription = "Send silently"
-        )
-        SimpleSpacer()
-        Image(
-            modifier = Modifier
-                .clickable {
-                    onSendMessageClick(text, false)
-                    text = ""
-                }
-                .padding(defaultPadding),
-            painter = painterResource(id = R.drawable.ic_outline_send_24),
-            contentDescription = "Send"
-        )
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = defaultPadding),
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    imeAction = ImeAction.Send
+                ),
+                shape = RoundedCornerShape(CornerSize(4.dp)),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = MaterialTheme.colors.primary,
+                    textColor = AppColor.elephantBone
+                ),
+                placeholder = {
+                    Text("Message")
+                },
+                value = text,
+                onValueChange = {
+                    text = it
+                })
+            AppIcon(
+                drawableId = R.drawable.ic_outline_cancel_schedule_send_24,
+                contentDescription = "Send silently"
+            ) {
+                onSendMessageClick(text, true)
+                text = ""
+            }
+            SimpleSpacer()
+            AppIcon(
+                drawableId = R.drawable.ic_outline_send_24,
+                contentDescription = "Send"
+            ) {
+                onSendMessageClick(text, false)
+                text = ""
+            }
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun MainPreview() {
-    MainContent(
-        state = AppState(
-            blogMessages = listOf(
-                BlogMessage()
-            ),
-            secretBlogsState = SecretBlogsState.VISIBLE,
-            isEdit = false
+    BlogTheme {
+        MainContent(
+            state = AppState(
+                blogMessages = listOf(
+                    BlogMessage()
+                ),
+                secretBlogsState = SecretBlogsState.VISIBLE,
+                isEdit = false
+            )
         )
-    )
+    }
 }

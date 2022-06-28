@@ -5,19 +5,22 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Checkbox
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ru.nightgoat.secretblog.android.R
+import ru.nightgoat.secretblog.android.presentation.BlogTheme
 import ru.nightgoat.secretblog.android.presentation.composables.AppAlert
+import ru.nightgoat.secretblog.android.presentation.composables.AppIcon
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
@@ -197,25 +200,30 @@ private fun SettingsButton(
     contentDescription: String = "",
     onClick: () -> Unit
 ) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = defaultPadding)
+            .padding(vertical = defaultPadding)
             .clickable {
                 onClick()
             }
     ) {
-        Text(
-            modifier = Modifier.padding(start = defaultPadding),
-            text = text
-        )
-        Image(
-            modifier = Modifier.padding(end = 12.dp),
-            painter = painterResource(id = imageId),
-            contentDescription = contentDescription
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier.padding(start = defaultPadding),
+                text = text
+            )
+            Image(
+                modifier = Modifier.padding(end = 12.dp),
+                painter = painterResource(id = imageId),
+                contentDescription = contentDescription,
+                colorFilter = ColorFilter.tint(MaterialTheme.colors.onBackground)
+            )
+        }
     }
 }
 
@@ -227,25 +235,22 @@ fun Toolbar(
 ) {
     Surface(
         elevation = 4.dp,
-        color = Color.White
+        color = MaterialTheme.colors.primary
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
+                .padding(defaultPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (isBackButtonVisible) {
                 SimpleSpacer()
-                Image(
-                    modifier = Modifier
-                        .clickable {
-                            onBackPressed()
-                        }
-                        .padding(defaultPadding),
-                    painter = painterResource(id = R.drawable.ic_outline_arrow_back_24),
+                AppIcon(
+                    drawableId = R.drawable.ic_outline_arrow_back_24,
                     contentDescription = "go back"
-                )
+                ) {
+                    onBackPressed()
+                }
             }
             if (title.isNotEmpty()) {
                 SimpleSpacer()
@@ -265,5 +270,7 @@ fun Toolbar(
 )
 @Composable
 fun SettingsPreview() {
-    MainContent()
+    BlogTheme {
+        MainContent()
+    }
 }

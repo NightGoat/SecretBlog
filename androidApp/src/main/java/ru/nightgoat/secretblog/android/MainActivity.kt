@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,15 +19,18 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import io.github.aakira.napier.Napier
 import org.koin.android.ext.android.inject
+import ru.nightgoat.secretblog.android.presentation.BlogTheme
 import ru.nightgoat.secretblog.android.presentation.screens.ChatScreen
 import ru.nightgoat.secretblog.android.presentation.screens.PinCodeScreen
 import ru.nightgoat.secretblog.android.presentation.screens.SettingsScreen
 import ru.nightgoat.secretblog.android.presentation.screens.SplashScreen
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen.PinCode.IS_PINCODE_CHECK_ARG
+import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.GlobalAction
+import ru.nightgoat.secretblog.providers.strings.Dictionary
 import ru.nightgoat.secretblog.providers.strings.StringProvider
 
 
@@ -82,50 +89,66 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            NavHost(navController = navController, startDestination = Screen.Splash.route) {
-                composable(Screen.Splash.route) {
-                    SplashScreen(
-                        navController = navController,
-                        viewModel = viewModel,
-                        state = state,
-                        sideEffect = effects,
-                        dictionary = dictionary
-                    )
+            BlogTheme {
+                Surface(
+                    color = MaterialTheme.colors.background
+                ) {
+                    AppNavigationGraph(navController, state, effects, dictionary)
                 }
-                composable(
-                    Screen.PinCode.route.plus("/{$IS_PINCODE_CHECK_ARG}"),
-                    arguments = listOf(navArgument(IS_PINCODE_CHECK_ARG) {
-                        type = NavType.StringType
-                    })
-                ) { backStackEntry ->
-                    PinCodeScreen(
-                        navController = navController,
-                        viewModel = viewModel,
-                        state = state,
-                        sideEffect = effects,
-                        isPincodeCheckArg = backStackEntry.arguments?.getString(IS_PINCODE_CHECK_ARG)
-                            ?: Screen.PinCode.IS_PINCODE_SET,
-                        dictionary = dictionary
-                    )
-                }
-                composable(Screen.Chat.route) {
-                    ChatScreen(
-                        navController = navController,
-                        viewModel = viewModel,
-                        state = state,
-                        effects = effects,
-                        dictionary = dictionary
-                    )
-                }
-                composable(Screen.Settings.route) {
-                    SettingsScreen(
-                        navController = navController,
-                        viewModel = viewModel,
-                        state = state,
-                        sideEffect = effects,
-                        dictionary = dictionary
-                    )
-                }
+            }
+        }
+    }
+
+    @Composable
+    private fun AppNavigationGraph(
+        navController: NavHostController,
+        state: AppState,
+        effects: BlogEffect,
+        dictionary: Dictionary
+    ) {
+        NavHost(navController = navController, startDestination = Screen.Splash.route) {
+            composable(Screen.Splash.route) {
+                SplashScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    state = state,
+                    sideEffect = effects,
+                    dictionary = dictionary
+                )
+            }
+            composable(
+                Screen.PinCode.route.plus("/{$IS_PINCODE_CHECK_ARG}"),
+                arguments = listOf(navArgument(IS_PINCODE_CHECK_ARG) {
+                    type = NavType.StringType
+                })
+            ) { backStackEntry ->
+                PinCodeScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    state = state,
+                    sideEffect = effects,
+                    isPincodeCheckArg = backStackEntry.arguments?.getString(IS_PINCODE_CHECK_ARG)
+                        ?: Screen.PinCode.IS_PINCODE_SET,
+                    dictionary = dictionary
+                )
+            }
+            composable(Screen.Chat.route) {
+                ChatScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    state = state,
+                    effects = effects,
+                    dictionary = dictionary
+                )
+            }
+            composable(Screen.Settings.route) {
+                SettingsScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    state = state,
+                    sideEffect = effects,
+                    dictionary = dictionary
+                )
             }
         }
     }
