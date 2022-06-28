@@ -1,7 +1,14 @@
+![App logo](/Images/Icon.png)
 # SecretBlog
 Kotlin Multiplatform Mobile diary app. Visually it looks like messenger for faster use, and has main feature of hiding secret messages.
 
-TODO:
+## Screenshots
+* [Pincode screen](/Images/Pin.png)
+* [Blog screen](/Images/Chat.png)
+* [Blog screen with hidden messages](/Images/Chat_hidden.png)
+* [Settings screen](/Images/Settings.png)
+
+## TODO:
 1. Fix navigation.
 2. ~Fix Pincode screen~
 3. ~Add pincode for show/hide secret messages.~
