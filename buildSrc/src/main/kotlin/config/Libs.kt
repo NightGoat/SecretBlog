@@ -14,6 +14,7 @@ object Libs {
     const val realm_db_version = "1.0.0"
     const val kvault_version = "1.9.0"
     const val napierVersion = "2.6.1"
+    const val kexVersion = "1.0"
 
     object Koin {
         const val koin = "io.insert-koin:koin-core:$koin_version"
@@ -76,5 +77,9 @@ object Libs {
         const val activity = "androidx.activity:activity-compose:1.4.0"
         const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
         const val navigation = "androidx.navigation:navigation-compose:$compose_navigation"
+    }
+
+    object Other {
+        const val kex = "io.github.nightgoat:Kextensions-core:$kexVersion"
     }
 }

@@ -32,6 +32,7 @@ kotlin {
                 implementation(config.Libs.Koin.koin)
                 implementation(config.Libs.Core.date_time)
                 implementation(config.Libs.Core.kvault)
+                api(config.Libs.Other.kex)
             }
         }
         val commonTest by getting {
