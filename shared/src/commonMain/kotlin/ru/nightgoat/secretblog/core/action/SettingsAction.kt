@@ -7,4 +7,5 @@ sealed class SettingsAction : Action {
     object ClearAllMessages : SettingsAction()
     object TurnOnOnSecretVisibilityPin : SettingsAction()
     object TurnOffOnSecretVisibilityPin : SettingsAction()
+    data class SelectTheme(val themeName: String) : SettingsAction()
 }

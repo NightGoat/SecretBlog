@@ -1,14 +1,12 @@
 package ru.nightgoat.secretblog.core
 
 import ru.nightgoat.secretblog.models.SecretBlogsState
+import ru.nightgoat.secretblog.models.ThemeType
 
-fun AppState.setPincode(isSet: Boolean) = this.copy(
-    settings = this.settings.copy(isPinCodeSet = isSet)
-)
+fun AppState.setPincode(isSet: Boolean) = this.changeSettings(isPinCodeSet = isSet)
 
-fun AppState.setVisibilityPincode(isSet: Boolean) = this.copy(
-    settings = this.settings.copy(isPinOnSecretVisibilitySet = isSet)
-)
+fun AppState.setVisibilityPincode(isSet: Boolean) =
+    this.changeSettings(isPinOnSecretVisibilitySet = isSet)
 
 fun AppState.turnOffEditMode() = this.copy(
     isEdit = false,
@@ -19,4 +17,16 @@ fun AppState.turnOffEditMode() = this.copy(
 
 fun AppState.hideSecretMessages() = this.copy(
     secretBlogsState = SecretBlogsState.HIDDEN
+)
+
+fun AppState.changeSettings(
+    isPinCodeSet: Boolean = this.settings.isPinCodeSet,
+    isPinOnSecretVisibilitySet: Boolean = this.settings.isPinOnSecretVisibilitySet,
+    themeType: ThemeType = this.settings.themeType
+) = this.copy(
+    settings = this.settings.copy(
+        isPinCodeSet = isPinCodeSet,
+        isPinOnSecretVisibilitySet = isPinOnSecretVisibilitySet,
+        themeType = themeType
+    )
 )

@@ -1,18 +1,13 @@
-package ru.nightgoat.secretblog.android.presentation.screens
+package ru.nightgoat.secretblog.android.presentation.screens.settings
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,6 +19,9 @@ import ru.nightgoat.secretblog.android.presentation.composables.AppIcon
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
+import ru.nightgoat.secretblog.android.presentation.screens.settings.composables.SettingsButton
+import ru.nightgoat.secretblog.android.presentation.screens.settings.composables.SettingsDropdown
+import ru.nightgoat.secretblog.android.presentation.screens.settings.composables.SettingsSwitch
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
@@ -84,6 +82,9 @@ fun SettingsScreen(
         },
         onDeleteAllMessagesButton = {
             viewModel.dispatch(SettingsAction.ClearAllMessages)
+        },
+        onThemeSelect = { themeName ->
+            viewModel.dispatch(SettingsAction.SelectTheme(themeName))
         }
     )
 }
@@ -115,7 +116,8 @@ private fun MainContent(
     onBackPressed: () -> Unit = {},
     onPinOnLoginCheck: (Boolean) -> Unit = {},
     onPinSecretVisibilityCheck: (Boolean) -> Unit = {},
-    onDeleteAllMessagesButton: () -> Unit = {}
+    onDeleteAllMessagesButton: () -> Unit = {},
+    onThemeSelect: (String) -> Unit = {}
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -128,7 +130,8 @@ private fun MainContent(
             dictionary = dictionary,
             onPinOnLoginCheck = onPinOnLoginCheck,
             onPinSecretVisibilityCheck = onPinSecretVisibilityCheck,
-            onDeleteAllMessagesButton = onDeleteAllMessagesButton
+            onDeleteAllMessagesButton = onDeleteAllMessagesButton,
+            onThemeSelect = onThemeSelect
         )
     }
 }
@@ -140,90 +143,36 @@ private fun Settings(
     onPinOnLoginCheck: (Boolean) -> Unit,
     onPinSecretVisibilityCheck: (Boolean) -> Unit,
     onDeleteAllMessagesButton: () -> Unit,
+    onThemeSelect: (String) -> Unit
 ) {
     Column(
         modifier = Modifier.padding(defaultPadding)
     ) {
-        SettingsCheckBox(
+        SettingsSwitch(
             text = dictionary.settingsPincodeOnEnterCheckBox,
             state = state,
             isChecked = state.settings.isPinCodeSet,
-            onCheckBoxClick = onPinOnLoginCheck
+            onClick = onPinOnLoginCheck
         )
         AnimatedVisibility(state.settings.isPinCodeSet) {
-            SettingsCheckBox(
+            SettingsSwitch(
                 text = dictionary.settingsPincodeSecretVisibilityCheckBox,
                 state = state,
                 isChecked = state.settings.isPinOnSecretVisibilitySet,
-                onCheckBoxClick = onPinSecretVisibilityCheck
+                onClick = onPinSecretVisibilityCheck
             )
         }
+        SettingsDropdown(
+            text = "Theme",
+            state = state,
+            selections = listOf("System", "Dark", "Light"),
+            onClick = onThemeSelect
+        )
         SettingsButton(
             text = dictionary.deleteAllMessages,
             imageId = R.drawable.ic_outline_delete_24,
             onClick = onDeleteAllMessagesButton
         )
-    }
-}
-
-@Composable
-private fun SettingsCheckBox(
-    text: String,
-    state: AppState,
-    isChecked: Boolean,
-    onCheckBoxClick: (Boolean) -> Unit
-) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onCheckBoxClick(!isChecked)
-            }
-    ) {
-        Text(
-            modifier = Modifier.padding(start = defaultPadding),
-            text = text
-        )
-        Checkbox(
-            checked = isChecked,
-            onCheckedChange = onCheckBoxClick
-        )
-    }
-}
-
-@Composable
-private fun SettingsButton(
-    text: String,
-    imageId: Int,
-    contentDescription: String = "",
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = defaultPadding)
-            .clickable {
-                onClick()
-            }
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                modifier = Modifier.padding(start = defaultPadding),
-                text = text
-            )
-            Image(
-                modifier = Modifier.padding(end = 12.dp),
-                painter = painterResource(id = imageId),
-                contentDescription = contentDescription,
-                colorFilter = ColorFilter.tint(MaterialTheme.colors.onBackground)
-            )
-        }
     }
 }
 

@@ -1,6 +1,7 @@
 package ru.nightgoat.secretblog.providers
 
 import ru.nightgoat.secretblog.models.Settings
+import ru.nightgoat.secretblog.models.ThemeType
 
 class SettingsProvider : KVaultPref() {
     override val kvault = KvaultProvider().provide()
@@ -8,12 +9,14 @@ class SettingsProvider : KVaultPref() {
     val settings: Settings
         get() = Settings(
             isPinCodeSet = isPinCodeSet,
-            isPinOnSecretVisibilitySet = isPinOnSecretVisibilitySet
+            isPinOnSecretVisibilitySet = isPinOnSecretVisibilitySet,
+            themeType = ThemeType.getFromName(selectedTheme)
         )
 
     private var pinCode: String by stringPref(PIN_CODE_KEY)
     var isPinCodeSet: Boolean by booleanPref(IS_PIN_CODE_SET_KEY)
     var isPinOnSecretVisibilitySet: Boolean by booleanPref(IS_PIN_CODE_ON_SECRET_VISIBILITY_SET_KEY)
+    var selectedTheme: String by stringPref(THEME_KEY)
 
     fun setNewPincode(newPincode: String) {
         pinCode = newPincode
@@ -31,6 +34,7 @@ class SettingsProvider : KVaultPref() {
 
     companion object {
         const val PIN_CODE_KEY = "PIN_CODE_KEY"
+        const val THEME_KEY = "THEME_KEY"
         const val IS_PIN_CODE_SET_KEY = "IS_PINC_ODE_SET_KEY"
         const val IS_PIN_CODE_ON_SECRET_VISIBILITY_SET_KEY =
             "IS_PIN_CODE_ON_SECRET_VISIBILITY_SET_KEY"
