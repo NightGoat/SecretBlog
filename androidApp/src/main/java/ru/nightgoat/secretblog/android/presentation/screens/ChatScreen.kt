@@ -36,6 +36,7 @@ import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.StoreViewModel
+import ru.nightgoat.secretblog.core.action.BlogAction
 import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.models.BlogMessage
 import ru.nightgoat.secretblog.models.SecretBlogsState
@@ -71,11 +72,13 @@ fun ChatScreen(
                     )
                 )
             } else {
-                viewModel.reverseVisibility()
+                viewModel.dispatch(BlogAction.ReverseSecretBlogsVisibility)
             }
         },
         onMessageSelect = viewModel::onMessageSelected,
-        onLongPress = viewModel::reverseEditMode,
+        onLongPress = {
+            viewModel.dispatch(BlogAction.ReverseEditMode)
+        },
         onDeleteMessagesClick = viewModel::deleteSelectedMessages,
         onSettingsClick = {
             viewModel.dispatch(GlobalAction.Navigate(Screen.Settings.route))

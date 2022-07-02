@@ -29,6 +29,7 @@ fun RealmInstant.getFullTimeStamp(): String {
 @Deprecated("Shows timestamp in single format, its better to use native time formatting")
 fun Instant.getFullTimeStamp(): String {
     return this.toLocalDateTime(TimeZone.currentSystemDefault()).run {
-        "${dayOfMonth.addLeadingZero()}.${monthNumber.addLeadingZero()}.${year.addLeadingZero()} ${hour.addLeadingZero()}:${minute.addLeadingZero()}"
+        "${dayOfMonth.addLeadingZero()}.${monthNumber.addLeadingZero()}.${year.addLeadingZero()} " +
+                "${hour.addLeadingZero()}:${minute.addLeadingZero()}"
     }
 }

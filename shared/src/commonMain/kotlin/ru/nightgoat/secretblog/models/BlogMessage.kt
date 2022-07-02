@@ -52,7 +52,7 @@ class BlogMessage : RealmObject, Entity {
             tags: RealmList<String> = realmListOf()
         ): BlogMessage {
             val new = BlogMessage()
-            return new.copy(id, text, time, isSecret, isSelected)
+            return new.copy(id, text, time, isSecret, isSelected, isFavorite, tags)
         }
     }
 }

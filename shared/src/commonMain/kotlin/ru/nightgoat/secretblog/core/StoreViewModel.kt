@@ -49,10 +49,6 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
         }
     }
 
-    fun clearDB() {
-        dispatch(BlogAction.ClearDB)
-    }
-
     fun refresh(
         action: RefreshAction
     ) {
@@ -61,14 +57,6 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
                 refreshAction = action
             )
         )
-    }
-
-    fun reverseVisibility() {
-        dispatch(BlogAction.ReverseSecretBlogsVisibility)
-    }
-
-    fun reverseEditMode() {
-        dispatch(BlogAction.ReverseEditMode)
     }
 
     fun onMessageSelected(message: BlogMessage, isSelected: Boolean) {

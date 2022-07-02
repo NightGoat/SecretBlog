@@ -12,16 +12,7 @@ import ru.nightgoat.secretblog.models.BlogMessage
 
 fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
     when (action) {
-        is BlogAction.Start -> {
-            launch(CoroutineName("Store.Start")) {
-                val newMessages = dataBase.init()
-                state.value = oldState.copy(
-                    blogMessages = newMessages,
-                    settings = settingsProvider.settings
-                )
-                sideEffect.emit(BlogEffect.LoadSuccess)
-            }
-        }
+        is BlogAction.Start -> reduceStartAction(oldState)
         is BlogAction.Refresh -> {
             launch(CoroutineName("Store.Refresh")) {
                 state.value = reduceRefreshAction(action, oldState)
@@ -70,6 +61,17 @@ fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
                 }
             )
         }
+    }
+}
+
+private fun StoreViewModel.reduceStartAction(oldState: AppState) {
+    launch(CoroutineName("Store.Start")) {
+        val newMessages = dataBase.init()
+        state.value = oldState.copy(
+            blogMessages = newMessages,
+            settings = settingsProvider.settings
+        )
+        sideEffect.emit(BlogEffect.LoadSuccess)
     }
 }
 
