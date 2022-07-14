@@ -25,4 +25,9 @@ object EnglishDictionary : Dictionary {
         "This action will erase all " +
                 "messages, do you wish to continue?"
     }
+
+    //Chat
+    override val messageTextPlaceHolder: String by lazy {
+        "Message"
+    }
 }

@@ -26,12 +26,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import io.github.nightgoat.kexcore.orZero
 import ru.nightgoat.secretblog.android.R
-import ru.nightgoat.secretblog.android.presentation.AppColor
-import ru.nightgoat.secretblog.android.presentation.BlogTheme
+import ru.nightgoat.secretblog.android.presentation.*
 import ru.nightgoat.secretblog.android.presentation.composables.AppIcon
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
-import ru.nightgoat.secretblog.android.presentation.defaultPadding
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
@@ -41,6 +40,12 @@ import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.models.BlogMessage
 import ru.nightgoat.secretblog.models.SecretBlogsState
 import ru.nightgoat.secretblog.providers.strings.Dictionary
+import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
+
+private const val TEXT_INPUT_MAX_LINES = 5
+private val TOOLBAR_TEXT_SIZE = 20.sp
+private val MESSAGE_TIME_STAMP_TEXT_SIZE = 12.sp
+private val MESSAGE_TEXT_SIZE = 16.sp
 
 @Composable
 fun ChatScreen(
@@ -54,14 +59,14 @@ fun ChatScreen(
     when (effects) {
         is BlogEffect.ScrollToLastElement -> {
             LaunchedEffect(state) {
-                listState.scrollToItem(state.visibleMessages.lastIndex.takeIf { it > 0 }
-                    ?: 0)
+                listState.scrollToItem(state.visibleMessages.lastIndex.takeIf { it > 0 }.orZero())
             }
         }
     }
-    MainContent(
+    ChatMainContent(
         state = state,
         listState = listState,
+        dictionary = dictionary,
         onSendMessageClick = viewModel::addMessage,
         onShowHideButtonClick = {
             if (state.settings.isPinOnSecretVisibilitySet && state.secretBlogsState.isHidden()) {
@@ -87,9 +92,10 @@ fun ChatScreen(
 }
 
 @Composable
-private fun MainContent(
+private fun ChatMainContent(
     state: AppState = AppState(),
     listState: LazyListState = LazyListState(),
+    dictionary: Dictionary = EnglishDictionary,
     onSendMessageClick: (String, Boolean) -> Unit = { _, _ -> },
     onShowHideButtonClick: () -> Unit = {},
     onMessageSelect: (BlogMessage, Boolean) -> Unit = { _, _ -> },
@@ -97,27 +103,30 @@ private fun MainContent(
     onDeleteMessagesClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {}
 ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Toolbar(
-                state = state,
-                onShowHideButtonClick = onShowHideButtonClick,
-                onCancelSelectionClick = onLongPress,
-                onDeleteMessagesClick = onDeleteMessagesClick,
-                onSettingsClick = onSettingsClick
-            )
-            Messages(
-                modifier = Modifier.weight(1f),
-                listState = listState,
-                state = state,
-                onMessageSelect = onMessageSelect,
-                onLongPress = onLongPress
-            )
-            InputToolbar { message, isSecret ->
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Toolbar(
+            state = state,
+            onShowHideButtonClick = onShowHideButtonClick,
+            onCancelSelectionClick = onLongPress,
+            onDeleteMessagesClick = onDeleteMessagesClick,
+            onSettingsClick = onSettingsClick
+        )
+        Messages(
+            modifier = Modifier.weight(1f),
+            listState = listState,
+            state = state,
+            onMessageSelect = onMessageSelect,
+            onLongPress = onLongPress
+        )
+        InputToolbar(
+            dictionary = dictionary,
+            onSendMessageClick = { message, isSecret ->
                 onSendMessageClick(message, isSecret)
             }
-        }
+        )
+    }
 }
 
 @Composable
@@ -129,7 +138,7 @@ private fun Toolbar(
     onSettingsClick: () -> Unit
 ) {
     Surface(
-        elevation = 4.dp,
+        elevation = defaultElevation,
         color = MaterialTheme.colors.primary
     ) {
         Row(
@@ -148,7 +157,7 @@ private fun Toolbar(
                 SimpleSpacer(16)
                 Text(
                     modifier = Modifier.weight(1f),
-                    fontSize = 20.sp,
+                    fontSize = TOOLBAR_TEXT_SIZE,
                     text = state.sizeOfSelectedMessages
                 )
                 AppIcon(
@@ -160,7 +169,7 @@ private fun Toolbar(
             } else {
                 Text(
                     modifier = Modifier.weight(1f),
-                    fontSize = 20.sp,
+                    fontSize = TOOLBAR_TEXT_SIZE,
                     text = stringResource(id = R.string.app_name)
                 )
             }
@@ -271,13 +280,13 @@ private fun MessageCard(
         ) {
             Text(
                 text = message.timeFormatted(),
-                fontSize = 12.sp,
+                fontSize = MESSAGE_TIME_STAMP_TEXT_SIZE,
                 color = timeStampColor
             )
             Spacer(modifier = Modifier.size(4.dp))
             Text(
                 text = message.text,
-                fontSize = 16.sp,
+                fontSize = MESSAGE_TEXT_SIZE,
                 color = textColor
             )
         }
@@ -286,10 +295,11 @@ private fun MessageCard(
 
 @Composable
 private fun InputToolbar(
+    dictionary: Dictionary,
     onSendMessageClick: (String, Boolean) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
-    Surface(elevation = 4.dp) {
+    Surface(elevation = defaultElevation) {
         Row(
             modifier = Modifier
                 .background(MaterialTheme.colors.primary)
@@ -305,18 +315,22 @@ private fun InputToolbar(
                     capitalization = KeyboardCapitalization.Sentences,
                     imeAction = ImeAction.Send
                 ),
-                shape = RoundedCornerShape(CornerSize(4.dp)),
+                shape = RoundedCornerShape(CornerSize(defaultCornerRadius)),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = MaterialTheme.colors.primary,
-                    textColor = AppColor.elephantBone
+                    textColor = AppColor.elephantBone,
+                    cursorColor = AppColor.elephantBone,
+                    placeholderColor = AppColor.elephantBone
                 ),
                 placeholder = {
-                    Text("Message")
+                    Text(dictionary.messageTextPlaceHolder)
                 },
                 value = text,
                 onValueChange = {
                     text = it
-                })
+                },
+                maxLines = TEXT_INPUT_MAX_LINES
+            )
             AppIcon(
                 drawableId = R.drawable.ic_outline_cancel_schedule_send_24,
                 contentDescription = "Send silently"
@@ -340,7 +354,7 @@ private fun InputToolbar(
 @Composable
 fun MainPreview() {
     BlogTheme {
-        MainContent(
+        ChatMainContent(
             state = AppState(
                 blogMessages = listOf(
                     BlogMessage()

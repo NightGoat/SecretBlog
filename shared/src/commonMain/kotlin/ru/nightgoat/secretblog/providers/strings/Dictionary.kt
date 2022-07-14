@@ -24,5 +24,5 @@ interface Dictionary {
     val deleteAllMessagesAlertMessage: String
 
     //Chat
-
+    val messageTextPlaceHolder: String
 }
