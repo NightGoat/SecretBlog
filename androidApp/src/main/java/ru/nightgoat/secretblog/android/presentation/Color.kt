@@ -11,4 +11,5 @@ object AppColor {
     val darkBlue = Color(Palette.darkBlue.toColorInt())
     val greyBlue = Color(Palette.greyBlue.toColorInt())
     val blue = Color(Palette.blue.toColorInt())
+    val red = Color(Palette.red.toColorInt())
 }

@@ -30,17 +30,17 @@ fun BlogTheme(
 }
 
 private val DarkColors = darkColors(
-    primary = AppColor.darkBlue,
+    primary = AppColor.blue,
     secondary = AppColor.blue,
     background = AppColor.darkBlue,
     onPrimary = AppColor.beige,
     onSecondary = AppColor.beige,
     onBackground = AppColor.beige,
-    primaryVariant = AppColor.blue
+    primaryVariant = AppColor.darkBlue
 )
 
 private val LightColors = lightColors(
-    primary = AppColor.blue,
+    primary = AppColor.darkBlue,
     secondary = AppColor.greyBlue,
     background = AppColor.beige,
     primaryVariant = AppColor.blue

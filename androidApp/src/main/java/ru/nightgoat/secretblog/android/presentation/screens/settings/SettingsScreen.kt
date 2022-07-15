@@ -184,7 +184,7 @@ fun Toolbar(
 ) {
     Surface(
         elevation = 4.dp,
-        color = MaterialTheme.colors.primary
+        color = MaterialTheme.colors.primaryVariant
     ) {
         Row(
             modifier = Modifier

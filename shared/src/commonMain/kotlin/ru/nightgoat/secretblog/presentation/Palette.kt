@@ -6,4 +6,5 @@ object Palette {
     const val darkBlue = "#070C33"
     const val greyBlue = "#A4B3C4"
     const val blue = "#649FCC"
+    const val red = "#e76f51"
 }

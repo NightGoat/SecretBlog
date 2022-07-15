@@ -3,7 +3,6 @@ package ru.nightgoat.secretblog.android.presentation.screens
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -139,7 +138,7 @@ private fun Toolbar(
 ) {
     Surface(
         elevation = defaultElevation,
-        color = MaterialTheme.colors.primary
+        color = MaterialTheme.colors.primaryVariant,
     ) {
         Row(
             modifier = Modifier
@@ -263,11 +262,12 @@ private fun MessageCard(
     onLongPress: () -> Unit
 ) {
     var backgroundColor = AppColor.elephantBone
-    val textColor = Color.Black
+    var textColor = Color.Black
     var timeStampColor = Color.DarkGray
     if (message.isSecret) {
-        backgroundColor = MaterialTheme.colors.primaryVariant
+        backgroundColor = AppColor.blue
         timeStampColor = Color.Black
+        textColor = Color.White
     }
     Card(
         modifier = Modifier
@@ -299,10 +299,12 @@ private fun InputToolbar(
     onSendMessageClick: (String, Boolean) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
-    Surface(elevation = defaultElevation) {
+    Surface(
+        elevation = defaultElevation,
+        color = MaterialTheme.colors.primaryVariant
+    ) {
         Row(
             modifier = Modifier
-                .background(MaterialTheme.colors.primary)
                 .fillMaxWidth()
                 .padding(defaultPadding),
             verticalAlignment = Alignment.CenterVertically
@@ -317,7 +319,7 @@ private fun InputToolbar(
                 ),
                 shape = RoundedCornerShape(CornerSize(defaultCornerRadius)),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = MaterialTheme.colors.primary,
+                    backgroundColor = MaterialTheme.colors.primaryVariant,
                     textColor = AppColor.elephantBone,
                     cursorColor = AppColor.elephantBone,
                     placeholderColor = AppColor.elephantBone

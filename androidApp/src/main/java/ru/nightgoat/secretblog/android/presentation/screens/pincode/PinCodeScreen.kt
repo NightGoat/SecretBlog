@@ -149,7 +149,7 @@ private fun PinMainContent(
     onBackClick: (() -> Unit) = {},
     onCantRememberClick: () -> Unit = {}
 ) {
-    Surface(color = MaterialTheme.colors.primary) {
+    Surface(color = MaterialTheme.colors.primaryVariant) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Bottom,
