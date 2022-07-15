@@ -21,10 +21,10 @@ import io.github.aakira.napier.Napier
 import org.koin.android.ext.android.inject
 import ru.nightgoat.secretblog.android.presentation.BlogTheme
 import ru.nightgoat.secretblog.android.presentation.screens.ChatScreen
-import ru.nightgoat.secretblog.android.presentation.screens.PinCodeScreen
 import ru.nightgoat.secretblog.android.presentation.screens.SplashScreen
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen.PinCode.IS_PINCODE_CHECK_ARG
+import ru.nightgoat.secretblog.android.presentation.screens.pincode.PinCodeScreen
 import ru.nightgoat.secretblog.android.presentation.screens.settings.SettingsScreen
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
