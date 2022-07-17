@@ -3,6 +3,7 @@ package ru.nightgoat.secretblog.android.presentation.screens.chat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,7 +32,7 @@ import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
 
 private val MESSAGE_TIME_STAMP_TEXT_SIZE = 12.sp
 private val MESSAGE_TEXT_SIZE = 16.sp
-private val selections = listOf("Edit", "Copy")
+private val selectedMessageBorder = 2.dp
 
 @Composable
 fun Messages(
@@ -125,15 +126,30 @@ private fun MessageCard(
     var backgroundColor = AppColor.elephantBone
     var textColor = Color.Black
     var timeStampColor = Color.DarkGray
-    if (message.isSecret) {
-        backgroundColor = AppColor.blue
-        timeStampColor = Color.Black
-        textColor = Color.White
+    var borderStroke: BorderStroke? = null
+    when { //TODO fix code duplication
+        isExpanded && !message.isSecret -> {
+            borderStroke =
+                BorderStroke(width = selectedMessageBorder, color = MaterialTheme.colors.primary)
+        }
+        !isExpanded && message.isSecret -> {
+            backgroundColor = AppColor.blue
+            timeStampColor = Color.Black
+            textColor = Color.White
+        }
+        isExpanded && message.isSecret -> {
+            backgroundColor = AppColor.blue
+            timeStampColor = Color.Black
+            textColor = Color.White
+            borderStroke =
+                BorderStroke(width = selectedMessageBorder, color = AppColor.elephantBone)
+        }
     }
     Card(
         modifier = Modifier
             .padding(defaultPadding),
         backgroundColor = backgroundColor,
+        border = borderStroke
     ) {
         Column(
             modifier = Modifier.padding(defaultPadding),
