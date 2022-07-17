@@ -54,6 +54,9 @@ fun ChatScreen(
         is BlogEffect.CopyToClipBoard -> {
             LocalClipboardManager.current.setText(AnnotatedString(effects.text))
         }
+        is BlogEffect.EditMessage -> {
+            //TODO
+        }
     }
     ChatMainContent(
         state = state,

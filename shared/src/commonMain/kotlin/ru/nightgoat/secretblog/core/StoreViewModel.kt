@@ -72,11 +72,13 @@ class StoreViewModel : KoinComponent, CoroutineScope by CoroutineScope(Dispatche
         reduceSideEffect(BlogEffect.NavigateBack)
     }
 
-    fun reduceSideEffect(effect: BlogEffect) {
+    fun reduceSideEffect(vararg effects: BlogEffect) {
         launch {
-            sideEffect.emit(effect)
-            delay(SIDE_EFFECT_DELAY)
-            sideEffect.emit(BlogEffect.Empty)
+            effects.forEach { effect ->
+                sideEffect.emit(effect)
+                delay(SIDE_EFFECT_DELAY)
+                sideEffect.emit(BlogEffect.Empty)
+            }
         }
     }
 
