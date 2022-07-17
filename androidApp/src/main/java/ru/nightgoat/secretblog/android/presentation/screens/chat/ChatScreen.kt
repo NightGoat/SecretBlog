@@ -83,10 +83,10 @@ fun ChatScreen(
         onDropDownSelected = { dropDown, message ->
             when (dropDown) {
                 is MessagesDropdowns.MessageDropDownSelectables.Copy -> {
-                    //TODO add action
+                    viewModel.dispatch(BlogAction.CopyToClipBoard(message.text))
                 }
                 is MessagesDropdowns.MessageDropDownSelectables.Edit -> {
-                    //TODO add action
+                    viewModel.dispatch(BlogAction.EditMessage(message))
                 }
             }
         }

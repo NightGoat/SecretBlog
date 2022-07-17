@@ -61,6 +61,12 @@ fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
                 }
             )
         }
+        is BlogAction.CopyToClipBoard -> {
+            reduceSideEffect(BlogEffect.CopyToClipBoard(action.text))
+        }
+        is BlogAction.EditMessage -> {
+            reduceSideEffect(BlogEffect.EditMessage(action.message))
+        }
     }
 }
 

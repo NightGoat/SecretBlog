@@ -1,11 +1,14 @@
 package ru.nightgoat.secretblog.core
 
+import ru.nightgoat.secretblog.models.BlogMessage
+
 sealed class BlogEffect : Effect {
     object Empty : BlogEffect()
     object ScrollToLastElement : BlogEffect()
     object LoadSuccess : BlogEffect()
     object LogOut : BlogEffect()
-    class CopyToClipBoard(val text: String) : BlogEffect()
+    data class CopyToClipBoard(val text: String) : BlogEffect()
+    data class EditMessage(val message: BlogMessage) : BlogEffect()
     data class PincodeCheckResult(
         val isPincodeRight: Boolean
     ) : BlogEffect()

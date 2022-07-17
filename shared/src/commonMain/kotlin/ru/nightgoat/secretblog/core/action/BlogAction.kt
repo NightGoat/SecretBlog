@@ -15,6 +15,8 @@ sealed class BlogAction : Action {
     object ReverseEditMode : BlogAction()
     data class SelectMessage(val message: BlogMessage, val isSelected: Boolean) : BlogAction()
     object ClearDB : BlogAction()
+    data class CopyToClipBoard(val text: String) : BlogAction()
+    data class EditMessage(val message: BlogMessage) : BlogAction()
 }
 
 sealed class RefreshAction {
