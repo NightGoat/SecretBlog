@@ -30,4 +30,12 @@ object EnglishDictionary : Dictionary {
     override val messageTextPlaceHolder: String by lazy {
         "Message"
     }
+
+    override val copy: String by lazy {
+        "Copy"
+    }
+
+    override val edit: String by lazy {
+        "Edit"
+    }
 }

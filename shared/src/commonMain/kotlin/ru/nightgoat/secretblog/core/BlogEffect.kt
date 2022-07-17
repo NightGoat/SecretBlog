@@ -5,6 +5,7 @@ sealed class BlogEffect : Effect {
     object ScrollToLastElement : BlogEffect()
     object LoadSuccess : BlogEffect()
     object LogOut : BlogEffect()
+    class CopyToClipBoard(val text: String) : BlogEffect()
     data class PincodeCheckResult(
         val isPincodeRight: Boolean
     ) : BlogEffect()

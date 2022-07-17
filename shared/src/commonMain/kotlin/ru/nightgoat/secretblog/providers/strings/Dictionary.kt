@@ -25,4 +25,6 @@ interface Dictionary {
 
     //Chat
     val messageTextPlaceHolder: String
+    val edit: String
+    val copy: String
 }
