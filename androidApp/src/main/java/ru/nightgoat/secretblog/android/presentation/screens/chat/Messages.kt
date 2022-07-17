@@ -127,23 +127,19 @@ private fun MessageCard(
     var textColor = Color.Black
     var timeStampColor = Color.DarkGray
     var borderStroke: BorderStroke? = null
-    when { //TODO fix code duplication
-        isExpanded && !message.isSecret -> {
-            borderStroke =
-                BorderStroke(width = selectedMessageBorder, color = MaterialTheme.colors.primary)
+    if (message.isSecret) {
+        backgroundColor = AppColor.blue
+        timeStampColor = Color.Black
+        textColor = Color.White
+    }
+    if (isExpanded) {
+        val selectionColor = if (message.isSecret) {
+            AppColor.elephantBone
+        } else {
+            MaterialTheme.colors.primary
         }
-        !isExpanded && message.isSecret -> {
-            backgroundColor = AppColor.blue
-            timeStampColor = Color.Black
-            textColor = Color.White
-        }
-        isExpanded && message.isSecret -> {
-            backgroundColor = AppColor.blue
-            timeStampColor = Color.Black
-            textColor = Color.White
-            borderStroke =
-                BorderStroke(width = selectedMessageBorder, color = AppColor.elephantBone)
-        }
+        borderStroke =
+            BorderStroke(width = selectedMessageBorder, color = selectionColor)
     }
     Card(
         modifier = Modifier
