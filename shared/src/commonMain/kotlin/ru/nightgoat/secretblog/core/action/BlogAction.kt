@@ -16,7 +16,9 @@ sealed class BlogAction : Action {
     data class SelectMessage(val message: BlogMessage, val isSelected: Boolean) : BlogAction()
     object ClearDB : BlogAction()
     data class CopyToClipBoard(val text: String) : BlogAction()
-    data class EditMessage(val message: BlogMessage) : BlogAction()
+    data class StartEditMessage(val message: BlogMessage) : BlogAction()
+    object CancelEditMessage : BlogAction()
+    data class EndEditMessage(val message: BlogMessage) : BlogAction()
 }
 
 sealed class RefreshAction {

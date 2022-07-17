@@ -55,6 +55,16 @@ class MessagesDataBase(private val provider: DataBaseProvider) : DataBase<BlogMe
         }
     }
 
+    override suspend fun update(entity: BlogMessage) {
+        db.write {
+            val message = query<BlogMessage>("id == ${entity.id}").first().find()
+            message?.also {
+                delete(it)
+            }
+            copyToRealm(entity)
+        }
+    }
+
     companion object {
         private const val TAG = "MessagesDataBase"
     }

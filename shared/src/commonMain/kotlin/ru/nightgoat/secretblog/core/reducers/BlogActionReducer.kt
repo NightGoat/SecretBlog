@@ -1,5 +1,6 @@
 package ru.nightgoat.secretblog.core.reducers
 
+import io.github.nightgoat.kexcore.changeElementBy
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.launch
 import ru.nightgoat.secretblog.core.AppState
@@ -9,6 +10,7 @@ import ru.nightgoat.secretblog.core.action.BlogAction
 import ru.nightgoat.secretblog.core.action.RefreshAction
 import ru.nightgoat.secretblog.core.turnOffEditMode
 import ru.nightgoat.secretblog.models.BlogMessage
+import ru.nightgoat.secretblog.models.ChatMessagesEditMode
 
 fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
     when (action) {
@@ -64,8 +66,28 @@ fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
         is BlogAction.CopyToClipBoard -> {
             reduceSideEffect(BlogEffect.CopyToClipBoard(action.text), BlogEffect.Toast("Copied!"))
         }
-        is BlogAction.EditMessage -> {
+        is BlogAction.StartEditMessage -> {
             reduceSideEffect(BlogEffect.EditMessage(action.message))
+            state.value = oldState.copy(
+                editMode = ChatMessagesEditMode.Edit(action.message)
+            )
+        }
+        is BlogAction.CancelEditMessage -> {
+            reduceSideEffect(BlogEffect.EditMessage(BlogMessage()))
+            state.value = oldState.copy(
+                editMode = ChatMessagesEditMode.None
+            )
+        }
+        is BlogAction.EndEditMessage -> {
+            launch {
+                dataBase.update(action.message)
+                state.value = oldState.copy(
+                    blogMessages = oldState.blogMessages.changeElementBy(action.message) {
+                        it.id == action.message.id
+                    },
+                    editMode = ChatMessagesEditMode.None
+                )
+            }
         }
     }
 }

@@ -6,9 +6,9 @@ class MessagesDropdowns(
     dictionary: Dictionary
 ) {
     val list = listOf(
-//        MessageDropDownSelectables.Edit(
-//            title = dictionary.edit
-//        ), TODO
+        MessageDropDownSelectables.Edit(
+            title = dictionary.edit
+        ),
         MessageDropDownSelectables.Copy(
             title = dictionary.copy
         )

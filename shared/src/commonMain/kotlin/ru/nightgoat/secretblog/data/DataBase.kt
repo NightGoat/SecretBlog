@@ -9,4 +9,5 @@ interface DataBase<T : Entity> {
     suspend fun delete(entity: T)
     suspend fun getAll(): List<T>
     suspend fun deleteAll()
+    suspend fun update(entity: T)
 }

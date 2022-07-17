@@ -25,6 +25,7 @@ import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.models.BlogMessage
+import ru.nightgoat.secretblog.models.ChatMessagesEditMode
 import ru.nightgoat.secretblog.models.SecretBlogsState
 import ru.nightgoat.secretblog.providers.strings.Dictionary
 import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
@@ -62,7 +63,7 @@ fun Messages(
                             onTap = {
                                 x = it.x.toDp()
                                 y = (-it.y).toDp()
-                                if (state.isEdit) {
+                                if (state.editMode == ChatMessagesEditMode.SelectForDelete) {
                                     onMessageSelect(message, !message.isSelected)
                                 } else {
                                     isExpanded = !isExpanded
@@ -77,7 +78,7 @@ fun Messages(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 AnimatedVisibility(
-                    visible = state.isEdit,
+                    visible = state.isModeSelectionForDelete,
                     enter = slideInHorizontally(),
                     exit = slideOutHorizontally()
                 ) {
@@ -88,7 +89,7 @@ fun Messages(
                         }
                     )
                 }
-                if (!state.isEdit) {
+                if (!state.isModeSelectionForDelete) {
                     SimpleSpacer()
                 }
                 MessageCard(
@@ -132,7 +133,8 @@ private fun MessageCard(
         timeStampColor = Color.Black
         textColor = Color.White
     }
-    if (isExpanded) {
+    val editMode = state.editMode
+    if (isExpanded || (editMode is ChatMessagesEditMode.Edit && editMode.message.id == message.id)) {
         val selectionColor = if (message.isSecret) {
             AppColor.elephantBone
         } else {
@@ -141,6 +143,7 @@ private fun MessageCard(
         borderStroke =
             BorderStroke(width = selectedMessageBorder, color = selectionColor)
     }
+
     Card(
         modifier = Modifier
             .padding(defaultPadding),
@@ -196,7 +199,6 @@ fun MessagesPreview() {
                     }
                 ),
                 secretBlogsState = SecretBlogsState.VISIBLE,
-                isEdit = false
             ),
             onLongPress = { },
             onMessageSelect = { _, _ -> }

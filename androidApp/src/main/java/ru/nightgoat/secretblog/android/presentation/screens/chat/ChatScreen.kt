@@ -6,8 +6,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -30,6 +29,7 @@ import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.BlogAction
 import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.models.BlogMessage
+import ru.nightgoat.secretblog.models.ChatMessagesEditMode
 import ru.nightgoat.secretblog.models.SecretBlogsState
 import ru.nightgoat.secretblog.providers.strings.Dictionary
 import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
@@ -45,6 +45,7 @@ fun ChatScreen(
     dictionary: Dictionary
 ) {
     val listState = rememberLazyListState()
+    var prerenderedText by remember { mutableStateOf<BlogMessage?>(null) }
     when (effects) {
         is BlogEffect.ScrollToLastElement -> {
             LaunchedEffect(state) {
@@ -55,7 +56,9 @@ fun ChatScreen(
             LocalClipboardManager.current.setText(AnnotatedString(effects.text))
         }
         is BlogEffect.EditMessage -> {
-            //TODO
+            LaunchedEffect(state) {
+                prerenderedText = effects.message
+            }
         }
     }
     ChatMainContent(
@@ -89,9 +92,16 @@ fun ChatScreen(
                     viewModel.dispatch(BlogAction.CopyToClipBoard(message.text))
                 }
                 is MessagesDropdowns.MessageDropDownSelectables.Edit -> {
-                    viewModel.dispatch(BlogAction.EditMessage(message))
+                    viewModel.dispatch(BlogAction.StartEditMessage(message))
                 }
             }
+        },
+        prerenderedInputText = prerenderedText,
+        onCancelEditMessage = {
+            viewModel.dispatch(BlogAction.CancelEditMessage)
+        },
+        onFinishEditMessage = { blogMessage ->
+            viewModel.dispatch(BlogAction.EndEditMessage(blogMessage))
         }
     )
 }
@@ -107,17 +117,22 @@ private fun ChatMainContent(
     onLongPress: () -> Unit = {},
     onDeleteMessagesClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
-    onDropDownSelected: (MessagesDropdowns.MessageDropDownSelectables, BlogMessage) -> Unit = { _, _ -> }
+    onDropDownSelected: (MessagesDropdowns.MessageDropDownSelectables, BlogMessage) -> Unit = { _, _ -> },
+    prerenderedInputText: BlogMessage? = null,
+    onCancelEditMessage: () -> Unit = {},
+    onFinishEditMessage: (BlogMessage) -> Unit = {}
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         Toolbar(
             state = state,
+            dictionary = dictionary,
             onShowHideButtonClick = onShowHideButtonClick,
             onCancelSelectionClick = onLongPress,
             onDeleteMessagesClick = onDeleteMessagesClick,
-            onSettingsClick = onSettingsClick
+            onSettingsClick = onSettingsClick,
+            onCancelEditMessage = onCancelEditMessage
         )
         Messages(
             modifier = Modifier.weight(1f),
@@ -128,10 +143,13 @@ private fun ChatMainContent(
             onDropDownSelected = onDropDownSelected
         )
         InputToolbar(
+            state = state,
             dictionary = dictionary,
+            prerenderedText = prerenderedInputText,
             onSendMessageClick = { message, isSecret ->
                 onSendMessageClick(message, isSecret)
-            }
+            },
+            onFinishEditMessage = onFinishEditMessage,
         )
     }
 }
@@ -139,10 +157,12 @@ private fun ChatMainContent(
 @Composable
 private fun Toolbar(
     state: AppState,
+    dictionary: Dictionary = EnglishDictionary,
     onDeleteMessagesClick: () -> Unit,
     onShowHideButtonClick: () -> Unit,
     onCancelSelectionClick: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onCancelEditMessage: () -> Unit
 ) {
     Surface(
         elevation = defaultElevation,
@@ -154,31 +174,48 @@ private fun Toolbar(
                 .padding(defaultPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (state.isEdit) {
-                AppIcon(
-                    drawableId = R.drawable.ic_outline_cancel_24,
-                    contentDescription = "Cancel selection"
-                ) {
-                    onCancelSelectionClick()
+            when (state.editMode) {
+                is ChatMessagesEditMode.None -> {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        fontSize = TOOLBAR_TEXT_SIZE,
+                        text = stringResource(id = R.string.app_name)
+                    )
                 }
-                SimpleSpacer(16)
-                Text(
-                    modifier = Modifier.weight(1f),
-                    fontSize = TOOLBAR_TEXT_SIZE,
-                    text = state.sizeOfSelectedMessages
-                )
-                AppIcon(
-                    drawableId = R.drawable.ic_outline_delete_24,
-                    contentDescription = "Delete messages"
-                ) {
-                    onDeleteMessagesClick()
+                is ChatMessagesEditMode.SelectForDelete -> {
+                    AppIcon(
+                        drawableId = R.drawable.ic_outline_cancel_24,
+                        contentDescription = "Cancel selection"
+                    ) {
+                        onCancelSelectionClick()
+                    }
+                    SimpleSpacer(16)
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        fontSize = TOOLBAR_TEXT_SIZE,
+                        text = state.sizeOfSelectedMessages
+                    )
+                    AppIcon(
+                        drawableId = R.drawable.ic_outline_delete_24,
+                        contentDescription = "Delete messages"
+                    ) {
+                        onDeleteMessagesClick()
+                    }
                 }
-            } else {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    fontSize = TOOLBAR_TEXT_SIZE,
-                    text = stringResource(id = R.string.app_name)
-                )
+                is ChatMessagesEditMode.Edit -> {
+                    AppIcon(
+                        drawableId = R.drawable.ic_outline_cancel_24,
+                        contentDescription = "Cancel selection"
+                    ) {
+                        onCancelEditMessage()
+                    }
+                    SimpleSpacer(16)
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        fontSize = TOOLBAR_TEXT_SIZE,
+                        text = dictionary.edit
+                    )
+                }
             }
             SimpleSpacer()
             val hideDrawable = when (state.secretBlogsState) {
@@ -213,7 +250,7 @@ fun MainPreview() {
                     BlogMessage()
                 ),
                 secretBlogsState = SecretBlogsState.VISIBLE,
-                isEdit = false
+                editMode = ChatMessagesEditMode.None
             )
         )
     }

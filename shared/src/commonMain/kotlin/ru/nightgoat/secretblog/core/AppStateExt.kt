@@ -1,5 +1,6 @@
 package ru.nightgoat.secretblog.core
 
+import ru.nightgoat.secretblog.models.ChatMessagesEditMode
 import ru.nightgoat.secretblog.models.SecretBlogsState
 import ru.nightgoat.secretblog.models.ThemeType
 
@@ -9,7 +10,7 @@ fun AppState.setVisibilityPincode(isSet: Boolean) =
     this.changeSettings(isPinOnSecretVisibilitySet = isSet)
 
 fun AppState.turnOffEditMode() = this.copy(
-    isEdit = false,
+    editMode = ChatMessagesEditMode.None,
     blogMessages = blogMessages.map {
         it.copy(isSelected = false)
     }

@@ -17,6 +17,9 @@ import ru.nightgoat.secretblog.android.R
 import ru.nightgoat.secretblog.android.presentation.*
 import ru.nightgoat.secretblog.android.presentation.composables.AppIcon
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
+import ru.nightgoat.secretblog.core.AppState
+import ru.nightgoat.secretblog.models.BlogMessage
+import ru.nightgoat.secretblog.models.ChatMessagesEditMode
 import ru.nightgoat.secretblog.providers.strings.Dictionary
 import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
 
@@ -25,10 +28,16 @@ private const val TEXT_INPUT_MAX_LINES = 5
 
 @Composable
 fun InputToolbar(
+    prerenderedText: BlogMessage? = null,
+    state: AppState = AppState(),
     dictionary: Dictionary,
-    onSendMessageClick: (String, Boolean) -> Unit
+    onSendMessageClick: (String, Boolean) -> Unit,
+    onFinishEditMessage: (BlogMessage) -> Unit = {}
 ) {
     var text by remember { mutableStateOf("") }
+    prerenderedText?.let {
+        text = it.text
+    }
     Surface(
         elevation = defaultElevation,
         color = MaterialTheme.colors.primaryVariant
@@ -63,19 +72,25 @@ fun InputToolbar(
                 },
                 maxLines = TEXT_INPUT_MAX_LINES
             )
-            AppIcon(
-                drawableId = R.drawable.ic_outline_cancel_schedule_send_24,
-                contentDescription = "Send silently"
-            ) {
-                onSendMessageClick(text, true)
-                text = ""
+            if (state.editMode !is ChatMessagesEditMode.Edit) {
+                AppIcon(
+                    drawableId = R.drawable.ic_outline_cancel_schedule_send_24,
+                    contentDescription = "Send silently"
+                ) {
+                    onSendMessageClick(text, true)
+                    text = ""
+                }
             }
             SimpleSpacer()
             AppIcon(
                 drawableId = R.drawable.ic_outline_send_24,
                 contentDescription = "Send"
             ) {
-                onSendMessageClick(text, false)
+                if (state.editMode !is ChatMessagesEditMode.Edit) {
+                    onSendMessageClick(text, false)
+                } else {
+                    onFinishEditMessage(prerenderedText?.copy(text = text) ?: BlogMessage())
+                }
                 text = ""
             }
         }
