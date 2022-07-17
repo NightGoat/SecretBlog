@@ -10,6 +10,7 @@ import ru.nightgoat.secretblog.utils.getFullTimeStamp
 
 class BlogMessage : RealmObject, Entity {
 
+    //    @PrimaryKey //TODO to fix message duplication on Edit, but need to add database export or migration first
     var id: Long = 0
     var text: String = ""
     var time: RealmInstant = TimeUtils.nowRealmInstant
@@ -40,6 +41,10 @@ class BlogMessage : RealmObject, Entity {
 
     fun makeSecret() = this.copy(isSecret = true)
     fun revealSecret() = this.copy(isSecret = false)
+
+    override fun toString(): String {
+        return "BlogMessage(id=$id, text='$text', time=$time, isSecret=$isSecret, isSelected=$isSelected, isFavorite=$isFavorite, tags=$tags)"
+    }
 
     companion object {
         fun newInstance(

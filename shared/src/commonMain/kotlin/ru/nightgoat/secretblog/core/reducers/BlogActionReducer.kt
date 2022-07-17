@@ -80,6 +80,7 @@ fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
         }
         is BlogAction.EndEditMessage -> {
             launch {
+                sideEffect.emit(BlogEffect.EditMessage(BlogMessage()))
                 dataBase.update(action.message)
                 state.value = oldState.copy(
                     blogMessages = oldState.blogMessages.changeElementBy(action.message) {
