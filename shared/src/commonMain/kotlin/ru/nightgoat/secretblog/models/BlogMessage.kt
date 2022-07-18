@@ -4,13 +4,14 @@ import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
+import io.realm.kotlin.types.annotations.PrimaryKey
 import ru.nightgoat.secretblog.data.Entity
 import ru.nightgoat.secretblog.utils.TimeUtils
 import ru.nightgoat.secretblog.utils.getFullTimeStamp
 
 class BlogMessage : RealmObject, Entity {
 
-    //    @PrimaryKey //TODO to fix message duplication on Edit, but need to add database export or migration first
+    @PrimaryKey
     var id: Long = 0
     var text: String = ""
     var time: RealmInstant = TimeUtils.nowRealmInstant
