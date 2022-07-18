@@ -20,6 +20,7 @@ import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.models.BlogMessage
 import ru.nightgoat.secretblog.models.ChatMessagesEditMode
+import ru.nightgoat.secretblog.models.orEmpty
 import ru.nightgoat.secretblog.providers.strings.Dictionary
 import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
 
@@ -80,18 +81,22 @@ fun InputToolbar(
                     onSendMessageClick(text, true)
                     text = ""
                 }
-            }
-            SimpleSpacer()
-            AppIcon(
-                drawableId = R.drawable.ic_outline_send_24,
-                contentDescription = "Send"
-            ) {
-                if (state.editMode !is ChatMessagesEditMode.Edit) {
+                SimpleSpacer()
+                AppIcon(
+                    drawableId = R.drawable.ic_outline_send_24,
+                    contentDescription = "Send"
+                ) {
                     onSendMessageClick(text, false)
-                } else {
-                    onFinishEditMessage(prerenderedText?.copy(text = text) ?: BlogMessage())
+                    text = ""
                 }
-                text = ""
+            } else {
+                AppIcon(
+                    drawableId = R.drawable.ic_outline_edit_24,
+                    contentDescription = dictionary.edit
+                ) {
+                    onFinishEditMessage(prerenderedText?.copy(text = text).orEmpty())
+                    text = ""
+                }
             }
         }
     }

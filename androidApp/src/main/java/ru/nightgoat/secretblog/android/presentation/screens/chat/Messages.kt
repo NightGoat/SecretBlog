@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -176,7 +178,14 @@ private fun MessageCard(
                     onDropDownSelected(selection, message)
                     onDissmisDropDown()
                 }) {
-                    Text(text = selection.title)
+                    Row {
+                        Image(
+                            modifier = Modifier.padding(end = defaultPadding),
+                            painter = painterResource(id = selection.iconId),
+                            contentDescription = selection.title
+                        )
+                        Text(text = selection.title)
+                    }
                 }
             }
         }
