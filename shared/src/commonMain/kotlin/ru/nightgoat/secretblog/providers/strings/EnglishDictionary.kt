@@ -27,15 +27,8 @@ object EnglishDictionary : Dictionary {
     }
 
     //Chat
-    override val messageTextPlaceHolder: String by lazy {
-        "Message"
-    }
-
-    override val copy: String by lazy {
-        "Copy"
-    }
-
-    override val edit: String by lazy {
-        "Edit"
-    }
+    override val messageTextPlaceHolder: String by lazy { "Message" }
+    override val copy: String by lazy { "Copy" }
+    override val edit: String by lazy { "Edit" }
+    override val delete by lazy { "Delete" }
 }

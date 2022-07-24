@@ -87,14 +87,7 @@ fun ChatScreen(
             viewModel.dispatch(GlobalAction.Navigate(Screen.Settings.route))
         },
         onDropDownSelected = { dropDown, message ->
-            when (dropDown) {
-                is MessagesDropdowns.MessageDropDownSelectables.Copy -> {
-                    viewModel.dispatch(BlogAction.CopyToClipBoard(message.text))
-                }
-                is MessagesDropdowns.MessageDropDownSelectables.Edit -> {
-                    viewModel.dispatch(BlogAction.StartEditMessage(message))
-                }
-            }
+            handleDropDownAction(dropDown, viewModel, message)
         },
         prerenderedInputText = prerenderedText,
         onCancelEditMessage = {
@@ -104,6 +97,24 @@ fun ChatScreen(
             viewModel.dispatch(BlogAction.EndEditMessage(blogMessage))
         }
     )
+}
+
+private fun handleDropDownAction(
+    dropDown: MessagesDropdowns.MessageDropDownSelectables,
+    viewModel: StoreViewModel,
+    message: BlogMessage
+) {
+    when (dropDown) {
+        is MessagesDropdowns.MessageDropDownSelectables.Copy -> {
+            viewModel.dispatch(BlogAction.CopyToClipBoard(message.text))
+        }
+        is MessagesDropdowns.MessageDropDownSelectables.Edit -> {
+            viewModel.dispatch(BlogAction.StartEditMessage(message))
+        }
+        is MessagesDropdowns.MessageDropDownSelectables.Delete -> {
+            viewModel.dispatch(BlogAction.RemoveMessages(listOf(message)))
+        }
+    }
 }
 
 @Composable

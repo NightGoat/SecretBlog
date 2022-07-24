@@ -11,7 +11,7 @@ object Libs {
     const val coroutines_version_native = "1.6.0-native-mt"
     const val compose_version = "1.1.1"
     const val compose_navigation = "2.4.2"
-    const val realm_db_version = "1.0.0"
+    const val realm_db_version = "1.0.1"
     const val kvault_version = "1.9.0"
     const val napierVersion = "2.6.1"
     const val kexVersion = "1.0"

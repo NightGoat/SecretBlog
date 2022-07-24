@@ -15,6 +15,10 @@ class MessagesDropdowns(
         MessageDropDownSelectables.Copy(
             title = dictionary.copy,
             iconId = R.drawable.ic_outline_content_copy_24
+        ),
+        MessageDropDownSelectables.Delete(
+            title = dictionary.delete,
+            iconId = R.drawable.ic_outline_delete_24
         )
     )
 
@@ -27,6 +31,11 @@ class MessagesDropdowns(
         ) : MessageDropDownSelectables()
 
         class Copy(
+            override val title: String,
+            @DrawableRes override val iconId: Int
+        ) : MessageDropDownSelectables()
+
+        class Delete(
             override val title: String,
             @DrawableRes override val iconId: Int
         ) : MessageDropDownSelectables()

@@ -27,4 +27,5 @@ interface Dictionary {
     val messageTextPlaceHolder: String
     val edit: String
     val copy: String
+    val delete: String
 }
