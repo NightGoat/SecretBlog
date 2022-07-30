@@ -76,15 +76,17 @@ fun PinCodeScreen(
         pincode = enteredPincode,
         pincodeScreenState = pincodeScreenState,
         onButtonClick = { buttonText ->
-            val newPincode = enteredPincode.plus(buttonText)
-            enteredPincode = newPincode
-            val isPincodeMax = newPincode.length >= PIN_MAX_LENGTH
-            when {
-                isPincodeMax && pincodeScreenState == Screen.PinCode.State.SET -> {
-                    viewModel.dispatch(PinCodeAction.SetPincode(enteredPincode))
-                }
-                isPincodeMax && pincodeScreenState != Screen.PinCode.State.SET -> {
-                    viewModel.dispatch(PinCodeAction.CheckPincode(enteredPincode))
+            if (enteredPincode.length < PIN_MAX_LENGTH) {
+                val newPincode = enteredPincode.plus(buttonText)
+                enteredPincode = newPincode
+                val isPincodeMax = newPincode.length == PIN_MAX_LENGTH
+                when {
+                    isPincodeMax && pincodeScreenState == Screen.PinCode.State.SET -> {
+                        viewModel.dispatch(PinCodeAction.SetPincode(enteredPincode))
+                    }
+                    isPincodeMax && pincodeScreenState != Screen.PinCode.State.SET -> {
+                        viewModel.dispatch(PinCodeAction.CheckPincode(enteredPincode))
+                    }
                 }
             }
         },
