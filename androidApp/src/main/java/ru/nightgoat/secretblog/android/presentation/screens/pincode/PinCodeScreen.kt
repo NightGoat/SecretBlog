@@ -19,6 +19,7 @@ import ru.nightgoat.secretblog.android.presentation.AppColor
 import ru.nightgoat.secretblog.android.presentation.BlogTheme
 import ru.nightgoat.secretblog.android.presentation.composables.AppAlert
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
+import ru.nightgoat.secretblog.android.presentation.composables.data.ButtonData
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
@@ -133,10 +134,16 @@ private fun DeleteDatabaseDialog(
     AppAlert(
         title = dictionary.eraseAppDataAlertTitle,
         message = dictionary.eraseAppDataAlertMessage,
-        leftButtonText = dictionary.no,
-        rightButtonText = dictionary.yes,
-        onLeftButtonClick = onCancelClick,
-        onRightButtonClick = onYesClick
+        leftButtonData = ButtonData(
+            text = dictionary.no,
+            color = AppColor.blue,
+            onClick = onCancelClick
+        ),
+        rightButtonData = ButtonData(
+            text = dictionary.yes,
+            color = AppColor.red,
+            onClick = onYesClick
+        )
     )
 }
 

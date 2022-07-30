@@ -13,10 +13,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ru.nightgoat.secretblog.android.R
+import ru.nightgoat.secretblog.android.presentation.AppColor
 import ru.nightgoat.secretblog.android.presentation.BlogTheme
 import ru.nightgoat.secretblog.android.presentation.composables.AppAlert
 import ru.nightgoat.secretblog.android.presentation.composables.AppIcon
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
+import ru.nightgoat.secretblog.android.presentation.composables.data.ButtonData
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
 import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.android.presentation.screens.settings.composables.SettingsButton
@@ -98,10 +100,16 @@ private fun DeleteAllMesagesDialog(
     AppAlert(
         title = dictionary.deleteAllMessagesAlertTitle,
         message = dictionary.deleteAllMessagesAlertMessage,
-        leftButtonText = dictionary.no,
-        rightButtonText = dictionary.yes,
-        onLeftButtonClick = onNoClick,
-        onRightButtonClick = onYesClick
+        leftButtonData = ButtonData(
+            text = dictionary.no,
+            color = AppColor.blue,
+            onClick = onNoClick
+        ),
+        rightButtonData = ButtonData(
+            text = dictionary.yes,
+            color = AppColor.red,
+            onClick = onYesClick
+        )
     )
 }
 
