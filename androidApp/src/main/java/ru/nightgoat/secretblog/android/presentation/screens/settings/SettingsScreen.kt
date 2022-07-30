@@ -30,6 +30,7 @@ import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.BlogAction
 import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.core.action.SettingsAction
+import ru.nightgoat.secretblog.models.ThemeType
 import ru.nightgoat.secretblog.providers.strings.Dictionary
 import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
 
@@ -85,8 +86,9 @@ fun SettingsScreen(
         onDeleteAllMessagesButton = {
             viewModel.dispatch(SettingsAction.ClearAllMessages)
         },
-        onThemeSelect = { themeName ->
-            viewModel.dispatch(SettingsAction.SelectTheme(themeName))
+        onThemeSelect = { index, _ ->
+            val name = ThemeType.values()[index]
+            viewModel.dispatch(SettingsAction.SelectTheme(name))
         }
     )
 }
@@ -125,7 +127,7 @@ private fun MainContent(
     onPinOnLoginCheck: (Boolean) -> Unit = {},
     onPinSecretVisibilityCheck: (Boolean) -> Unit = {},
     onDeleteAllMessagesButton: () -> Unit = {},
-    onThemeSelect: (String) -> Unit = {}
+    onThemeSelect: (Int, String) -> Unit = { _, _ -> }
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -151,29 +153,27 @@ private fun Settings(
     onPinOnLoginCheck: (Boolean) -> Unit,
     onPinSecretVisibilityCheck: (Boolean) -> Unit,
     onDeleteAllMessagesButton: () -> Unit,
-    onThemeSelect: (String) -> Unit
+    onThemeSelect: (Int, String) -> Unit
 ) {
     Column(
         modifier = Modifier.padding(defaultPadding)
     ) {
         SettingsSwitch(
             text = dictionary.settingsPincodeOnEnterCheckBox,
-            state = state,
             isChecked = state.settings.isPinCodeSet,
             onClick = onPinOnLoginCheck
         )
         AnimatedVisibility(state.settings.isPinCodeSet) {
             SettingsSwitch(
                 text = dictionary.settingsPincodeSecretVisibilityCheckBox,
-                state = state,
                 isChecked = state.settings.isPinOnSecretVisibilitySet,
                 onClick = onPinSecretVisibilityCheck
             )
         }
         SettingsDropdown(
-            text = "Theme",
-            state = state,
-            selections = listOf("System", "Dark", "Light"),
+            text = dictionary.theme,
+            initialSelection = dictionary.mapThemeName(state.settings.themeType),
+            selections = ThemeType.values().map { dictionary.mapThemeName(it) },
             onClick = onThemeSelect
         )
         SettingsButton(

@@ -4,9 +4,9 @@ enum class ThemeType(name: String) {
     System("System"), Dark("Dark"), Light("Light");
 
     companion object {
-        fun getFromName(name: String) = when (name) {
-            Dark.name -> Dark
-            Light.name -> Light
+        fun getFromOrdinal(ordinal: Int) = when (ordinal) {
+            Dark.ordinal -> Dark
+            Light.ordinal -> Light
             else -> System
         }
     }

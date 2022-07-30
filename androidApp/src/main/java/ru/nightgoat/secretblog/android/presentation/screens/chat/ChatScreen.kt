@@ -147,6 +147,7 @@ private fun ChatMainContent(
         )
         Messages(
             modifier = Modifier.weight(1f),
+            dictionary = dictionary,
             listState = listState,
             state = state,
             onMessageSelect = onMessageSelect,

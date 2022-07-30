@@ -10,13 +10,13 @@ class SettingsProvider : KVaultPref() {
         get() = Settings(
             isPinCodeSet = isPinCodeSet,
             isPinOnSecretVisibilitySet = isPinOnSecretVisibilitySet,
-            themeType = ThemeType.getFromName(selectedTheme)
+            themeType = ThemeType.getFromOrdinal(selectedTheme)
         )
 
     private var pinCode: String by stringPref(PIN_CODE_KEY)
     var isPinCodeSet: Boolean by booleanPref(IS_PIN_CODE_SET_KEY)
     var isPinOnSecretVisibilitySet: Boolean by booleanPref(IS_PIN_CODE_ON_SECRET_VISIBILITY_SET_KEY)
-    var selectedTheme: String by stringPref(THEME_KEY)
+    var selectedTheme: Int by intPref(THEME_KEY)
 
     fun setNewPincode(newPincode: String) {
         pinCode = newPincode

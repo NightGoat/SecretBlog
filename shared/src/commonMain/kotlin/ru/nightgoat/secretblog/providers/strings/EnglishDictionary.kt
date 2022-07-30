@@ -1,5 +1,7 @@
 package ru.nightgoat.secretblog.providers.strings
 
+import ru.nightgoat.secretblog.models.ThemeType
+
 object EnglishDictionary : Dictionary {
     //Common
     override val yes: String by lazy { "Yes" }
@@ -25,10 +27,17 @@ object EnglishDictionary : Dictionary {
         "This action will erase all " +
                 "messages, do you wish to continue?"
     }
+    override val theme: String by lazy {
+        "Theme"
+    }
 
     //Chat
     override val messageTextPlaceHolder: String by lazy { "Message" }
     override val copy: String by lazy { "Copy" }
     override val edit: String by lazy { "Edit" }
     override val delete by lazy { "Delete" }
+
+    override fun mapThemeName(theme: ThemeType): String {
+        return theme.name
+    }
 }

@@ -18,17 +18,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.nightgoat.secretblog.android.R
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
-import ru.nightgoat.secretblog.core.AppState
 
 @Composable
 fun SettingsDropdown(
     text: String,
-    state: AppState,
     selections: List<String>,
-    onClick: (String) -> Unit
+    initialSelection: String,
+    onClick: (Int, String) -> Unit
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-    var selected by remember { mutableStateOf(state.settings.themeType.name) }
+    var selected by remember { mutableStateOf(initialSelection) }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -59,10 +58,10 @@ fun SettingsDropdown(
             DropdownMenu(expanded = isExpanded, onDismissRequest = {
                 isExpanded = !isExpanded
             }) {
-                selections.forEach { selection ->
+                selections.forEachIndexed { index, selection ->
                     DropdownMenuItem(onClick = {
                         selected = selection
-                        onClick(selection)
+                        onClick(index, selection)
                         isExpanded = !isExpanded
                     }) {
                         Text(text = selection)
