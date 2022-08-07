@@ -21,6 +21,7 @@ object EnglishDictionary : Dictionary {
     override val settingsTitle: String by lazy { "Settings" }
     override val settingsPincodeOnEnterCheckBox: String by lazy { "Pin on login" }
     override val settingsPincodeSecretVisibilityCheckBox: String by lazy { "Pin on secret messages visibility" }
+    override val settingsPincodeSettingsCheckBox: String by lazy { "Pin on settings" }
     override val deleteAllMessages: String by lazy { "Delete all messages" }
     override val deleteAllMessagesAlertTitle: String by lazy { "Warning!" }
     override val deleteAllMessagesAlertMessage: String by lazy {

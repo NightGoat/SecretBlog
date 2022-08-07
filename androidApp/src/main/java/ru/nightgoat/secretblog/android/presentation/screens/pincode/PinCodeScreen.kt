@@ -20,9 +20,9 @@ import ru.nightgoat.secretblog.android.presentation.BlogTheme
 import ru.nightgoat.secretblog.android.presentation.composables.AppAlert
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
 import ru.nightgoat.secretblog.android.presentation.composables.data.ButtonData
-import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
+import ru.nightgoat.secretblog.core.Screen
 import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.core.action.PinCodeAction
@@ -118,7 +118,12 @@ private fun reducePincodeCheck(
                 viewModel.dispatch(PinCodeAction.ReverseSecretMessagesVisibility)
             }
             Screen.PinCode.State.CHECK_ON_SETTINGS -> {
-
+                viewModel.dispatch(
+                    GlobalAction.Navigate(
+                        route = Screen.Settings.route,
+                        clearThatScreenFromBackStack = true
+                    )
+                )
             }
             else -> Unit
         }

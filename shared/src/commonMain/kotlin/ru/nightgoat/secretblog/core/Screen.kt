@@ -1,4 +1,4 @@
-package ru.nightgoat.secretblog.android.presentation.screens.base
+package ru.nightgoat.secretblog.core
 
 sealed class Screen {
     abstract val route: String

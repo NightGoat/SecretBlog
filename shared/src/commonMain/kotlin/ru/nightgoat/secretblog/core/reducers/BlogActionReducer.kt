@@ -3,12 +3,10 @@ package ru.nightgoat.secretblog.core.reducers
 import io.github.nightgoat.kexcore.changeElementBy
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.launch
-import ru.nightgoat.secretblog.core.AppState
-import ru.nightgoat.secretblog.core.BlogEffect
-import ru.nightgoat.secretblog.core.StoreViewModel
+import ru.nightgoat.secretblog.core.*
 import ru.nightgoat.secretblog.core.action.BlogAction
+import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.core.action.RefreshAction
-import ru.nightgoat.secretblog.core.turnOffEditMode
 import ru.nightgoat.secretblog.models.BlogMessage
 import ru.nightgoat.secretblog.models.ChatMessagesEditMode
 
@@ -89,6 +87,16 @@ fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
                     editMode = ChatMessagesEditMode.None
                 )
             }
+        }
+        is BlogAction.OpenSettingsScreen -> {
+            var argument: String? = null
+            val screen = if (oldState.settings.isPinOnSettingsSet) {
+                argument = Screen.PinCode.IS_PINCODE_CHECK_ON_SETTINGS
+                Screen.PinCode.route
+            } else {
+                Screen.Settings.route
+            }
+            dispatch(GlobalAction.Navigate(screen, argument))
         }
     }
 }

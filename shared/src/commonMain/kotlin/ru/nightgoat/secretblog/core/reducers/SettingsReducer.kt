@@ -34,6 +34,13 @@ fun StoreViewModel.settingsReducer(
                 themeType = ThemeType.getFromOrdinal(themeOrdinal)
             )
         }
+        is SettingsAction.ChangeSettingsPinCheck -> {
+            val isSet = action.isChecked
+            settingsProvider.isPinOnSettingsSet = isSet
+            state.value = oldState.changeSettings(
+                isPinOnSettingsSet = isSet
+            )
+        }
     }
 
 }

@@ -21,6 +21,7 @@ object RussianDictionary : Dictionary {
     override val settingsTitle: String by lazy { "Настройки" }
     override val settingsPincodeOnEnterCheckBox: String by lazy { "Проверка пинкода при входе" }
     override val settingsPincodeSecretVisibilityCheckBox: String by lazy { "Проверка пинкода при отображении секретных сообщений" }
+    override val settingsPincodeSettingsCheckBox: String by lazy { "Проверка пинкода для настроек" }
     override val deleteAllMessages: String by lazy { "Удалить все сообщения" }
     override val deleteAllMessagesAlertTitle: String by lazy { "Внимание!" }
     override val deleteAllMessagesAlertMessage: String by lazy {

@@ -24,7 +24,8 @@ sealed class BlogEffect : Effect {
 
     data class Navigate(
         val route: String,
-        val argument: String? = null
+        val argument: String? = null,
+        val clearCurrentScreenFromBackStack: Boolean = false
     ) : BlogEffect()
 
     object NavigateBack : BlogEffect()
