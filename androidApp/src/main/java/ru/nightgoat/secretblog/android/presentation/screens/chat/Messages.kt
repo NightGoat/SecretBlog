@@ -36,6 +36,7 @@ import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
 private val MESSAGE_TIME_STAMP_TEXT_SIZE = 12.sp
 private val MESSAGE_TEXT_SIZE = 16.sp
 private val selectedMessageBorder = 2.dp
+private val dropDownMinWidth = 128.dp
 
 @Composable
 fun Messages(
@@ -178,7 +179,9 @@ private fun MessageCard(
                     onDropDownSelected(selection, message)
                     onDissmisDropDown()
                 }) {
-                    Row {
+                    Row(
+                        modifier = Modifier.defaultMinSize(minWidth = dropDownMinWidth)
+                    ) {
                         Image(
                             modifier = Modifier.padding(end = defaultPadding),
                             painter = painterResource(id = selection.iconId),

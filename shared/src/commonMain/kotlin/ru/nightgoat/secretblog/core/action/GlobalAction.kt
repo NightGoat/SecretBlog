@@ -5,7 +5,8 @@ import ru.nightgoat.secretblog.core.Action
 sealed class GlobalAction : Action {
     data class Navigate(
         val route: String,
-        val argument: String? = null
+        val argument: String? = null,
+        val clearThatScreenFromBackStack: Boolean = false,
     ) : GlobalAction()
 
     object NavigateBack : GlobalAction()

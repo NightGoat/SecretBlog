@@ -9,7 +9,13 @@ import ru.nightgoat.secretblog.core.action.GlobalAction
 fun StoreViewModel.globalActionReducer(action: GlobalAction, oldState: AppState) {
     when (action) {
         is GlobalAction.Navigate -> {
-            reduceSideEffect(BlogEffect.Navigate(action.route, action.argument))
+            reduceSideEffect(
+                BlogEffect.Navigate(
+                    action.route,
+                    action.argument,
+                    action.clearThatScreenFromBackStack
+                )
+            )
         }
         is GlobalAction.NavigateBack -> {
             reduceSideEffect(BlogEffect.NavigateBack)

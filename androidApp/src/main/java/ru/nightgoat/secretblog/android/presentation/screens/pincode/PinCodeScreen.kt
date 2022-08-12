@@ -19,9 +19,10 @@ import ru.nightgoat.secretblog.android.presentation.AppColor
 import ru.nightgoat.secretblog.android.presentation.BlogTheme
 import ru.nightgoat.secretblog.android.presentation.composables.AppAlert
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
-import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
+import ru.nightgoat.secretblog.android.presentation.composables.data.ButtonData
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
+import ru.nightgoat.secretblog.core.Screen
 import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.core.action.PinCodeAction
@@ -76,15 +77,17 @@ fun PinCodeScreen(
         pincode = enteredPincode,
         pincodeScreenState = pincodeScreenState,
         onButtonClick = { buttonText ->
-            val newPincode = enteredPincode.plus(buttonText)
-            enteredPincode = newPincode
-            val isPincodeMax = newPincode.length >= PIN_MAX_LENGTH
-            when {
-                isPincodeMax && pincodeScreenState == Screen.PinCode.State.SET -> {
-                    viewModel.dispatch(PinCodeAction.SetPincode(enteredPincode))
-                }
-                isPincodeMax && pincodeScreenState != Screen.PinCode.State.SET -> {
-                    viewModel.dispatch(PinCodeAction.CheckPincode(enteredPincode))
+            if (enteredPincode.length < PIN_MAX_LENGTH) {
+                val newPincode = enteredPincode.plus(buttonText)
+                enteredPincode = newPincode
+                val isPincodeMax = newPincode.length == PIN_MAX_LENGTH
+                when {
+                    isPincodeMax && pincodeScreenState == Screen.PinCode.State.SET -> {
+                        viewModel.dispatch(PinCodeAction.SetPincode(enteredPincode))
+                    }
+                    isPincodeMax && pincodeScreenState != Screen.PinCode.State.SET -> {
+                        viewModel.dispatch(PinCodeAction.CheckPincode(enteredPincode))
+                    }
                 }
             }
         },
@@ -115,7 +118,12 @@ private fun reducePincodeCheck(
                 viewModel.dispatch(PinCodeAction.ReverseSecretMessagesVisibility)
             }
             Screen.PinCode.State.CHECK_ON_SETTINGS -> {
-
+                viewModel.dispatch(
+                    GlobalAction.Navigate(
+                        route = Screen.Settings.route,
+                        clearThatScreenFromBackStack = true
+                    )
+                )
             }
             else -> Unit
         }
@@ -131,10 +139,16 @@ private fun DeleteDatabaseDialog(
     AppAlert(
         title = dictionary.eraseAppDataAlertTitle,
         message = dictionary.eraseAppDataAlertMessage,
-        leftButtonText = dictionary.no,
-        rightButtonText = dictionary.yes,
-        onLeftButtonClick = onCancelClick,
-        onRightButtonClick = onYesClick
+        leftButtonData = ButtonData(
+            text = dictionary.no,
+            color = AppColor.blue,
+            onClick = onCancelClick
+        ),
+        rightButtonData = ButtonData(
+            text = dictionary.yes,
+            color = AppColor.red,
+            onClick = onYesClick
+        )
     )
 }
 

@@ -9,7 +9,8 @@ class StringProvider : Provider<Dictionary> {
     }
 
     override fun provide(): Dictionary {
-        return when (locale) {
+        return when {
+            locale.contains("ru", ignoreCase = true) -> RussianDictionary
             else -> EnglishDictionary
         }
     }

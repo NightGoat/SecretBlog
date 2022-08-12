@@ -13,21 +13,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ru.nightgoat.secretblog.android.R
+import ru.nightgoat.secretblog.android.presentation.AppColor
 import ru.nightgoat.secretblog.android.presentation.BlogTheme
 import ru.nightgoat.secretblog.android.presentation.composables.AppAlert
 import ru.nightgoat.secretblog.android.presentation.composables.AppIcon
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
+import ru.nightgoat.secretblog.android.presentation.composables.data.ButtonData
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
-import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.android.presentation.screens.settings.composables.SettingsButton
 import ru.nightgoat.secretblog.android.presentation.screens.settings.composables.SettingsDropdown
 import ru.nightgoat.secretblog.android.presentation.screens.settings.composables.SettingsSwitch
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
+import ru.nightgoat.secretblog.core.Screen
 import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.BlogAction
 import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.core.action.SettingsAction
+import ru.nightgoat.secretblog.models.ThemeType
 import ru.nightgoat.secretblog.providers.strings.Dictionary
 import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
 
@@ -80,11 +83,15 @@ fun SettingsScreen(
             }
             viewModel.dispatch(action)
         },
+        onPinSettingsCheck = { isChecked ->
+            viewModel.dispatch(SettingsAction.ChangeSettingsPinCheck(isChecked))
+        },
         onDeleteAllMessagesButton = {
             viewModel.dispatch(SettingsAction.ClearAllMessages)
         },
-        onThemeSelect = { themeName ->
-            viewModel.dispatch(SettingsAction.SelectTheme(themeName))
+        onThemeSelect = { index, _ ->
+            val name = ThemeType.values()[index]
+            viewModel.dispatch(SettingsAction.SelectTheme(name))
         }
     )
 }
@@ -98,10 +105,16 @@ private fun DeleteAllMesagesDialog(
     AppAlert(
         title = dictionary.deleteAllMessagesAlertTitle,
         message = dictionary.deleteAllMessagesAlertMessage,
-        leftButtonText = dictionary.no,
-        rightButtonText = dictionary.yes,
-        onLeftButtonClick = onNoClick,
-        onRightButtonClick = onYesClick
+        leftButtonData = ButtonData(
+            text = dictionary.no,
+            color = AppColor.blue,
+            onClick = onNoClick
+        ),
+        rightButtonData = ButtonData(
+            text = dictionary.yes,
+            color = AppColor.red,
+            onClick = onYesClick
+        )
     )
 }
 
@@ -116,8 +129,9 @@ private fun MainContent(
     onBackPressed: () -> Unit = {},
     onPinOnLoginCheck: (Boolean) -> Unit = {},
     onPinSecretVisibilityCheck: (Boolean) -> Unit = {},
+    onPinSettingsCheck: (Boolean) -> Unit = {},
     onDeleteAllMessagesButton: () -> Unit = {},
-    onThemeSelect: (String) -> Unit = {}
+    onThemeSelect: (Int, String) -> Unit = { _, _ -> }
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -130,6 +144,7 @@ private fun MainContent(
             dictionary = dictionary,
             onPinOnLoginCheck = onPinOnLoginCheck,
             onPinSecretVisibilityCheck = onPinSecretVisibilityCheck,
+            onPinSettingsCheck = onPinSettingsCheck,
             onDeleteAllMessagesButton = onDeleteAllMessagesButton,
             onThemeSelect = onThemeSelect
         )
@@ -142,30 +157,36 @@ private fun Settings(
     dictionary: Dictionary,
     onPinOnLoginCheck: (Boolean) -> Unit,
     onPinSecretVisibilityCheck: (Boolean) -> Unit,
+    onPinSettingsCheck: (Boolean) -> Unit,
     onDeleteAllMessagesButton: () -> Unit,
-    onThemeSelect: (String) -> Unit
+    onThemeSelect: (Int, String) -> Unit
 ) {
     Column(
         modifier = Modifier.padding(defaultPadding)
     ) {
         SettingsSwitch(
             text = dictionary.settingsPincodeOnEnterCheckBox,
-            state = state,
             isChecked = state.settings.isPinCodeSet,
             onClick = onPinOnLoginCheck
         )
         AnimatedVisibility(state.settings.isPinCodeSet) {
-            SettingsSwitch(
-                text = dictionary.settingsPincodeSecretVisibilityCheckBox,
-                state = state,
-                isChecked = state.settings.isPinOnSecretVisibilitySet,
-                onClick = onPinSecretVisibilityCheck
-            )
+            Column {
+                SettingsSwitch(
+                    text = dictionary.settingsPincodeSecretVisibilityCheckBox,
+                    isChecked = state.settings.isPinOnSecretVisibilitySet,
+                    onClick = onPinSecretVisibilityCheck
+                )
+                SettingsSwitch(
+                    text = dictionary.settingsPincodeSettingsCheckBox,
+                    isChecked = state.settings.isPinOnSettingsSet,
+                    onClick = onPinSettingsCheck
+                )
+            }
         }
         SettingsDropdown(
-            text = "Theme",
-            state = state,
-            selections = listOf("System", "Dark", "Light"),
+            text = dictionary.theme,
+            initialSelection = dictionary.mapThemeName(state.settings.themeType),
+            selections = ThemeType.values().map { dictionary.mapThemeName(it) },
             onClick = onThemeSelect
         )
         SettingsButton(

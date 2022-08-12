@@ -1,5 +1,7 @@
 package ru.nightgoat.secretblog.providers.strings
 
+import ru.nightgoat.secretblog.models.ThemeType
+
 object EnglishDictionary : Dictionary {
     //Common
     override val yes: String by lazy { "Yes" }
@@ -19,23 +21,24 @@ object EnglishDictionary : Dictionary {
     override val settingsTitle: String by lazy { "Settings" }
     override val settingsPincodeOnEnterCheckBox: String by lazy { "Pin on login" }
     override val settingsPincodeSecretVisibilityCheckBox: String by lazy { "Pin on secret messages visibility" }
+    override val settingsPincodeSettingsCheckBox: String by lazy { "Pin on settings" }
     override val deleteAllMessages: String by lazy { "Delete all messages" }
     override val deleteAllMessagesAlertTitle: String by lazy { "Warning!" }
     override val deleteAllMessagesAlertMessage: String by lazy {
         "This action will erase all " +
                 "messages, do you wish to continue?"
     }
+    override val theme: String by lazy {
+        "Theme"
+    }
 
     //Chat
-    override val messageTextPlaceHolder: String by lazy {
-        "Message"
-    }
+    override val messageTextPlaceHolder: String by lazy { "Message" }
+    override val copy: String by lazy { "Copy" }
+    override val edit: String by lazy { "Edit" }
+    override val delete by lazy { "Delete" }
 
-    override val copy: String by lazy {
-        "Copy"
-    }
-
-    override val edit: String by lazy {
-        "Edit"
+    override fun mapThemeName(theme: ThemeType): String {
+        return theme.name
     }
 }

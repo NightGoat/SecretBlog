@@ -22,9 +22,9 @@ import ru.nightgoat.secretblog.android.presentation.composables.AppIcon
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
 import ru.nightgoat.secretblog.android.presentation.defaultElevation
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
-import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
+import ru.nightgoat.secretblog.core.Screen
 import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.BlogAction
 import ru.nightgoat.secretblog.core.action.GlobalAction
@@ -84,17 +84,10 @@ fun ChatScreen(
         },
         onDeleteMessagesClick = viewModel::deleteSelectedMessages,
         onSettingsClick = {
-            viewModel.dispatch(GlobalAction.Navigate(Screen.Settings.route))
+            viewModel.dispatch(BlogAction.OpenSettingsScreen)
         },
         onDropDownSelected = { dropDown, message ->
-            when (dropDown) {
-                is MessagesDropdowns.MessageDropDownSelectables.Copy -> {
-                    viewModel.dispatch(BlogAction.CopyToClipBoard(message.text))
-                }
-                is MessagesDropdowns.MessageDropDownSelectables.Edit -> {
-                    viewModel.dispatch(BlogAction.StartEditMessage(message))
-                }
-            }
+            handleDropDownAction(dropDown, viewModel, message)
         },
         prerenderedInputText = prerenderedText,
         onCancelEditMessage = {
@@ -104,6 +97,24 @@ fun ChatScreen(
             viewModel.dispatch(BlogAction.EndEditMessage(blogMessage))
         }
     )
+}
+
+private fun handleDropDownAction(
+    dropDown: MessagesDropdowns.MessageDropDownSelectables,
+    viewModel: StoreViewModel,
+    message: BlogMessage
+) {
+    when (dropDown) {
+        is MessagesDropdowns.MessageDropDownSelectables.Copy -> {
+            viewModel.dispatch(BlogAction.CopyToClipBoard(message.text))
+        }
+        is MessagesDropdowns.MessageDropDownSelectables.Edit -> {
+            viewModel.dispatch(BlogAction.StartEditMessage(message))
+        }
+        is MessagesDropdowns.MessageDropDownSelectables.Delete -> {
+            viewModel.dispatch(BlogAction.RemoveMessages(listOf(message)))
+        }
+    }
 }
 
 @Composable
@@ -136,6 +147,7 @@ private fun ChatMainContent(
         )
         Messages(
             modifier = Modifier.weight(1f),
+            dictionary = dictionary,
             listState = listState,
             state = state,
             onMessageSelect = onMessageSelect,

@@ -19,6 +19,7 @@ sealed class BlogAction : Action {
     data class StartEditMessage(val message: BlogMessage) : BlogAction()
     object CancelEditMessage : BlogAction()
     data class EndEditMessage(val message: BlogMessage) : BlogAction()
+    object OpenSettingsScreen : BlogAction()
 }
 
 sealed class RefreshAction {

@@ -15,19 +15,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.nightgoat.secretblog.android.presentation.AppColor
 import ru.nightgoat.secretblog.android.presentation.BlogTheme
+import ru.nightgoat.secretblog.android.presentation.composables.data.ButtonData
 
+private val alertButtonHeight = 48.dp
+private val buttonsPadding = 16.dp
+private const val buttonSpacing = 8
 
 @Composable
 fun AppAlert(
     title: String,
     message: String,
-    leftButtonText: String,
-    rightButtonText: String,
-    onLeftButtonClick: () -> Unit,
-    onRightButtonClick: () -> Unit,
+    leftButtonData: ButtonData,
+    rightButtonData: ButtonData,
 ) {
     AlertDialog(
-        onDismissRequest = onLeftButtonClick,
+        onDismissRequest = leftButtonData.onClick,
         title = {
             Text(title)
         },
@@ -35,35 +37,40 @@ fun AppAlert(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(buttonsPadding),
             ) {
                 Button(
                     modifier = Modifier
-                        .height(48.dp)
+                        .height(alertButtonHeight)
                         .weight(0.5f),
-                    onClick = onLeftButtonClick,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = AppColor.red)
+                    onClick = leftButtonData.onClick,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = leftButtonData.color)
                 ) {
-                    Text(
-                        text = leftButtonText,
-                        color = Color.White
-                    )
+                    AlertButtonText(leftButtonData)
                 }
-                SimpleSpacer(8)
+                SimpleSpacer(buttonSpacing)
                 Button(
                     modifier = Modifier
-                        .height(48.dp)
+                        .height(alertButtonHeight)
                         .weight(0.5f),
-                    onClick = onRightButtonClick,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = AppColor.blue)
+                    onClick = rightButtonData.onClick,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = rightButtonData.color)
                 ) {
-                    Text(rightButtonText)
+                    AlertButtonText(rightButtonData)
                 }
             }
         },
         text = {
             Text(text = message)
         }
+    )
+}
+
+@Composable
+private fun AlertButtonText(buttonData: ButtonData) {
+    Text(
+        text = buttonData.text,
+        color = Color.White
     )
 }
 
@@ -74,11 +81,12 @@ fun AlertPreview() {
         AppAlert(
             title = "Hello world",
             message = "Indeed hello world",
-            leftButtonText = "No",
-            rightButtonText = "Yes",
-            onLeftButtonClick = { }) {
-
-        }
-
+            leftButtonData = ButtonData(
+                text = "No"
+            ),
+            rightButtonData = ButtonData(
+                text = "Yes", color = AppColor.red
+            )
+        )
     }
 }

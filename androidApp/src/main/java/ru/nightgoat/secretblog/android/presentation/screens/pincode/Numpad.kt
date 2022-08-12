@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.nightgoat.secretblog.android.presentation.AppColor
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
-import ru.nightgoat.secretblog.android.presentation.screens.base.Screen
+import ru.nightgoat.secretblog.core.Screen
 import ru.nightgoat.secretblog.providers.strings.Dictionary
 
 private const val PIN_BUTTON_BORDER_RADIUS = 2

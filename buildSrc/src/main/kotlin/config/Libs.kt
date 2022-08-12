@@ -3,15 +3,14 @@ package config
 
 object Libs {
 
-    const val kotlin_version = "1.6.20"
-    const val koin_version = "3.2.0-beta-1"
-    const val redux_version = "0.5.5"
+    const val kotlin_version = "1.7.0"
+    const val koin_version = "3.2.0"
     const val date_time_version = "0.3.2"
     const val coroutines_version = "1.6.0"
     const val coroutines_version_native = "1.6.0-native-mt"
-    const val compose_version = "1.1.1"
-    const val compose_navigation = "2.4.2"
-    const val realm_db_version = "1.0.0"
+    const val compose_version = "1.2.0"
+    const val compose_navigation = "2.5.1"
+    const val realm_db_version = "1.0.1"
     const val kvault_version = "1.9.0"
     const val napierVersion = "2.6.1"
     const val kexVersion = "1.0"
@@ -43,7 +42,6 @@ object Libs {
     }
 
     object Core {
-        const val redux = "org.reduxkotlin:redux-kotlin-threadsafe:$redux_version"
         const val date_time = "org.jetbrains.kotlinx:kotlinx-datetime:$date_time_version"
         const val coroutines =
             "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"

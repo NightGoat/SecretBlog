@@ -28,9 +28,17 @@ fun StoreViewModel.settingsReducer(
             state.value = oldState.setVisibilityPincode(true)
         }
         is SettingsAction.SelectTheme -> {
-            settingsProvider.selectedTheme = action.themeName
+            val themeOrdinal = action.themeName.ordinal
+            settingsProvider.selectedTheme = themeOrdinal
             state.value = state.value.changeSettings(
-                themeType = ThemeType.getFromName(action.themeName)
+                themeType = ThemeType.getFromOrdinal(themeOrdinal)
+            )
+        }
+        is SettingsAction.ChangeSettingsPinCheck -> {
+            val isSet = action.isChecked
+            settingsProvider.isPinOnSettingsSet = isSet
+            state.value = oldState.changeSettings(
+                isPinOnSettingsSet = isSet
             )
         }
     }
