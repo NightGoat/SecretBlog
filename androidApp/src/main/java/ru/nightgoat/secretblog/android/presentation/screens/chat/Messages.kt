@@ -48,7 +48,7 @@ fun Messages(
     onLongPress: () -> Unit,
     onMessageSelect: (BlogMessage, Boolean) -> Unit,
 ) {
-    val dropdowns by remember { mutableStateOf(MessagesDropdowns(dictionary).list) }
+    val dropdowns by remember { mutableStateOf(MessagesDropdowns(dictionary)) }
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         state = listState,
@@ -103,7 +103,7 @@ fun Messages(
                     onDissmisDropDown = {
                         isExpanded = !isExpanded
                     },
-                    dropdowns = dropdowns,
+                    dropdowns = dropdowns.list(message),
                     onDropDownSelected = onDropDownSelected,
                     onLongPress = onLongPress,
                     onMessageSelect = { message, isSelected ->

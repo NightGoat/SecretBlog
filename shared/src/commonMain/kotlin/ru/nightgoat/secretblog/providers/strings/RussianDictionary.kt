@@ -37,6 +37,8 @@ object RussianDictionary : Dictionary {
     override val copy: String by lazy { "Скопировать" }
     override val edit: String by lazy { "Изменить" }
     override val delete by lazy { "Удалить" }
+    override val makeSecret: String by lazy { "Спрятать" }
+    override val revealMessage: String by lazy { "Открыть" }
 
     override fun mapThemeName(theme: ThemeType): String {
         return when (theme) {

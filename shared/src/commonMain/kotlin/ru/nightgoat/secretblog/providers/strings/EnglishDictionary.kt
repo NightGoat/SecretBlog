@@ -37,6 +37,8 @@ object EnglishDictionary : Dictionary {
     override val copy: String by lazy { "Copy" }
     override val edit: String by lazy { "Edit" }
     override val delete by lazy { "Delete" }
+    override val makeSecret: String by lazy { "Make secret" }
+    override val revealMessage: String by lazy { "Reveal" }
 
     override fun mapThemeName(theme: ThemeType): String {
         return theme.name

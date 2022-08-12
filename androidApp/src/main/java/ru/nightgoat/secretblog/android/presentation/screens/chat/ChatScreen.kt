@@ -104,17 +104,27 @@ private fun handleDropDownAction(
     viewModel: StoreViewModel,
     message: BlogMessage
 ) {
-    when (dropDown) {
+    val action = when (dropDown) {
         is MessagesDropdowns.MessageDropDownSelectables.Copy -> {
-            viewModel.dispatch(BlogAction.CopyToClipBoard(message.text))
+            BlogAction.CopyToClipBoard(message.text)
         }
         is MessagesDropdowns.MessageDropDownSelectables.Edit -> {
-            viewModel.dispatch(BlogAction.StartEditMessage(message))
+            BlogAction.StartEditMessage(message)
         }
         is MessagesDropdowns.MessageDropDownSelectables.Delete -> {
-            viewModel.dispatch(BlogAction.RemoveMessages(listOf(message)))
+            BlogAction.RemoveMessages(listOf(message))
+        }
+        is MessagesDropdowns.MessageDropDownSelectables.MakeSecret -> {
+            BlogAction.ChangeSecretState(message = message, changeStateTo = SecretBlogsState.HIDDEN)
+        }
+        is MessagesDropdowns.MessageDropDownSelectables.RevealSecret -> {
+            BlogAction.ChangeSecretState(
+                message = message,
+                changeStateTo = SecretBlogsState.VISIBLE
+            )
         }
     }
+    viewModel.dispatch(action = action)
 }
 
 @Composable

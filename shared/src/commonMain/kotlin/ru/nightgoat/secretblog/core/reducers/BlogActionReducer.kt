@@ -1,6 +1,5 @@
 package ru.nightgoat.secretblog.core.reducers
 
-import io.github.nightgoat.kexcore.changeElementBy
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.launch
 import ru.nightgoat.secretblog.core.*
@@ -78,12 +77,11 @@ fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
         }
         is BlogAction.EndEditMessage -> {
             launch {
+                val message = action.message
                 sideEffect.emit(BlogEffect.EditMessage(BlogMessage()))
-                dataBase.update(action.message)
+                dataBase.update(message)
                 state.value = oldState.copy(
-                    blogMessages = oldState.blogMessages.changeElementBy(action.message) {
-                        it.id == action.message.id
-                    },
+                    blogMessages = oldState.blogMessages.updateMessage(message),
                     editMode = ChatMessagesEditMode.None
                 )
             }
@@ -97,6 +95,15 @@ fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
                 Screen.Settings.route
             }
             dispatch(GlobalAction.Navigate(screen, argument))
+        }
+        is BlogAction.ChangeSecretState -> {
+            launch {
+                val message = action.message.copy(
+                    isSecret = action.changeStateTo.isHidden()
+                )
+                dataBase.update(message)
+                state.value = oldState.updateMessage(message)
+            }
         }
     }
 }

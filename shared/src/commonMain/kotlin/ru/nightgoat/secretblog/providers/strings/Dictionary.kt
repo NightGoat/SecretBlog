@@ -32,6 +32,8 @@ interface Dictionary {
     val edit: String
     val copy: String
     val delete: String
+    val makeSecret: String
+    val revealMessage: String
 
     fun mapThemeName(theme: ThemeType): String
 }

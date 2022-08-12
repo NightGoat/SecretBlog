@@ -1,5 +1,7 @@
 package ru.nightgoat.secretblog.core
 
+import io.github.nightgoat.kexcore.changeElementBy
+import ru.nightgoat.secretblog.models.BlogMessage
 import ru.nightgoat.secretblog.models.ChatMessagesEditMode
 import ru.nightgoat.secretblog.models.SecretBlogsState
 import ru.nightgoat.secretblog.models.ThemeType
@@ -37,3 +39,11 @@ fun AppState.changeSettings(
         themeType = themeType
     )
 )
+
+fun AppState.updateMessage(message: BlogMessage) = this.copy(
+    blogMessages = this.blogMessages.updateMessage(message)
+)
+
+fun List<BlogMessage>.updateMessage(message: BlogMessage) = this.changeElementBy(message) {
+    it.id == message.id
+}

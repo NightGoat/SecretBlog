@@ -2,6 +2,7 @@ package ru.nightgoat.secretblog.core.action
 
 import ru.nightgoat.secretblog.core.Action
 import ru.nightgoat.secretblog.models.BlogMessage
+import ru.nightgoat.secretblog.models.SecretBlogsState
 
 sealed class BlogAction : Action {
     data class AddMessage(val message: String, val isSecret: Boolean) : BlogAction()
@@ -20,6 +21,8 @@ sealed class BlogAction : Action {
     object CancelEditMessage : BlogAction()
     data class EndEditMessage(val message: BlogMessage) : BlogAction()
     object OpenSettingsScreen : BlogAction()
+    data class ChangeSecretState(val message: BlogMessage, val changeStateTo: SecretBlogsState) :
+        BlogAction()
 }
 
 sealed class RefreshAction {
