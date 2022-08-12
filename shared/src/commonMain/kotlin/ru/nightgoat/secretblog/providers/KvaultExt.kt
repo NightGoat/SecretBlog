@@ -80,7 +80,7 @@ fun KVault.longPrefNullable(key: String? = null, defaultValue: Long? = null) =
         }
     )
 
-fun <S> KVault.intPref(key: String? = null, defaultValue: Int = 0) = readWriteProp(
+fun KVault.intPref(key: String? = null, defaultValue: Int = 0) = readWriteProp(
     defaultValue = defaultValue,
     getValue = { prop ->
         val newKey = key ?: prop.name
