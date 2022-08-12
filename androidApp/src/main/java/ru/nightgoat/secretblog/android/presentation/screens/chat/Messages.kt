@@ -15,7 +15,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -49,6 +51,7 @@ fun Messages(
     onMessageSelect: (BlogMessage, Boolean) -> Unit,
 ) {
     val dropdowns by remember { mutableStateOf(MessagesDropdowns(dictionary)) }
+    val haptic = LocalHapticFeedback.current
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         state = listState,
@@ -64,16 +67,18 @@ fun Messages(
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onTap = {
-                                x = it.x.toDp()
-                                y = (-it.y).toDp()
                                 if (state.editMode == ChatMessagesEditMode.SelectForDelete) {
                                     onMessageSelect(message, !message.isSelected)
                                 } else {
+                                    x = it.x.toDp()
+                                    y = (-it.y).toDp()
                                     isExpanded = !isExpanded
                                 }
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             },
                             onLongPress = {
                                 onLongPress()
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             }
                         )
                     },

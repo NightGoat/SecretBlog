@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,6 +80,7 @@ private fun PincodeButton(
     onDeleteClick: (() -> Unit)? = null,
     onBackClick: (() -> Unit)? = null
 ) {
+    val haptic = LocalHapticFeedback.current
     if (text.isNotEmpty()) {
         Box(
             modifier = Modifier
@@ -95,6 +98,7 @@ private fun PincodeButton(
                     onBackClick?.let {
                         it()
                     }
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 },
         ) {
             Text(
