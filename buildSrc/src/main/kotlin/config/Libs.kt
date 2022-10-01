@@ -1,16 +1,17 @@
 package config
 
-
 object Libs {
 
-    const val kotlin_version = "1.7.0"
-    const val koin_version = "3.2.0"
-    const val date_time_version = "0.3.2"
-    const val coroutines_version = "1.6.0"
+    const val kotlin_version = "1.7.20"
+    const val koin_version = "3.2.2"
+    const val date_time_version = "0.4.0"
+    const val coroutines_version = "1.6.4"
     const val coroutines_version_native = "1.6.0-native-mt"
-    const val compose_version = "1.2.0"
-    const val compose_navigation = "2.5.1"
-    const val realm_db_version = "1.0.1"
+    const val compose_version = "1.2.1"
+    const val compose_navigation = "2.5.2"
+    const val compose_activity = "1.6.0"
+    const val compose_viewmodel = "2.5.1"
+    const val realm_db_version = "1.0.2"
     const val kvault_version = "1.9.0"
     const val napierVersion = "2.6.1"
     const val kexVersion = "1.0"
@@ -72,8 +73,8 @@ object Libs {
         // UI Tests
         const val ui_tests = "androidx.compose.ui:ui-test-junit4:$compose_version"
 
-        const val activity = "androidx.activity:activity-compose:1.4.0"
-        const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
+        const val activity = "androidx.activity:activity-compose:$compose_activity"
+        const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-compose:$compose_viewmodel"
         const val navigation = "androidx.navigation:navigation-compose:$compose_navigation"
     }
 
