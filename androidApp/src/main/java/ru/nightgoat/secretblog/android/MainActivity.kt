@@ -100,6 +100,11 @@ class MainActivity : AppCompatActivity() {
                         startActivity(intent)
                     }
                 }
+                is BlogEffect.ClearPincodeFromBackStack -> {
+                    effects.launch {
+                        navController.clearBackStack(Screen.PinCode.route)
+                    }
+                }
             }
             BlogTheme(
                 selectedTheme = state.settings.themeType

@@ -13,6 +13,7 @@ fun StoreViewModel.settingsReducer(
         is SettingsAction.TurnOffPincode -> {
             settingsProvider.clearPincode()
             state.value = oldState.setPincode(false)
+            reduceSideEffect(BlogEffect.ClearPincodeFromBackStack)
         }
         is SettingsAction.ClearAllMessages -> {
             launch {

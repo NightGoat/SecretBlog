@@ -34,4 +34,5 @@ sealed class BlogEffect : Effect {
 
     object NavigateBack : BlogEffect()
     object ClearBackStackAndGoToChat : BlogEffect()
+    object ClearPincodeFromBackStack : BlogEffect()
 }
