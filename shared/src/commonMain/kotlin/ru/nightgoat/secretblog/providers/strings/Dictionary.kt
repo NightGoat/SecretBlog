@@ -38,5 +38,6 @@ interface Dictionary {
     val sendToTwitter: String
 
     fun mapThemeName(theme: ThemeType): String
-    fun lazyString(string: String): Lazy<String> = lazy { string }
 }
+
+fun lazyString(string: String): Lazy<String> = lazy { string }

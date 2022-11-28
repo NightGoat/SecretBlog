@@ -2,47 +2,51 @@ package ru.nightgoat.secretblog.providers.strings
 
 import ru.nightgoat.secretblog.models.ThemeType
 
-object RussianDictionary : Dictionary {
+@Deprecated(
+    "Use MultiLanguageDictionary",
+    replaceWith = ReplaceWith("MultiLanguageDictionary()")
+)
+object RussianDictionary {
     //Common
-    override val yes: String by lazy { "Да" }
-    override val no by lazy { "Нет" }
-    override val back by lazy { "Назад" }
+    val yes: String by lazy { "Да" }
+    val no by lazy { "Нет" }
+    val back by lazy { "Назад" }
 
     //Pin
-    override val wrongPincode by lazy { "Неверный пинкод!" }
-    override val cannotRememberPin: String by lazy { "Я не помню пинкод" }
-    override val eraseAppDataAlertTitle by lazy { "Внимание!" }
-    override val eraseAppDataAlertMessage by lazy {
+    val wrongPincode by lazy { "Неверный пинкод!" }
+    val cannotRememberPin: String by lazy { "Я не помню пинкод" }
+    val eraseAppDataAlertTitle by lazy { "Внимание!" }
+    val eraseAppDataAlertMessage by lazy {
         "Это действие удалит всю информацию в приложении " +
                 "и пропустит вас через пинкод, вы желаете продолжить?"
     }
 
     //Settings
-    override val settingsTitle: String by lazy { "Настройки" }
-    override val settingsPincodeOnEnterCheckBox: String by lazy { "Проверка пинкода при входе" }
-    override val settingsPincodeSecretVisibilityCheckBox: String by lazy { "Проверка пинкода при отображении секретных сообщений" }
-    override val settingsPincodeSettingsCheckBox: String by lazy { "Проверка пинкода для настроек" }
-    override val deleteAllMessages: String by lazy { "Удалить все сообщения" }
-    override val deleteAllMessagesAlertTitle: String by lazy { "Внимание!" }
-    override val deleteAllMessagesAlertMessage: String by lazy {
+    val settingsTitle: String by lazy { "Настройки" }
+    val settingsPincodeOnEnterCheckBox: String by lazy { "Проверка пинкода при входе" }
+    val settingsPincodeSecretVisibilityCheckBox: String by lazy { "Проверка пинкода при отображении секретных сообщений" }
+    val settingsPincodeSettingsCheckBox: String by lazy { "Проверка пинкода для настроек" }
+    val deleteAllMessages: String by lazy { "Удалить все сообщения" }
+    val deleteAllMessagesAlertTitle: String by lazy { "Внимание!" }
+    val deleteAllMessagesAlertMessage: String by lazy {
         "Это действие удалит все сообщения!" +
                 "Вы желаете продолжить?"
     }
-    override val theme: String by lazy {
+    val theme: String by lazy {
         "Тема"
     }
-    override val twitterSetting: String by lazyString("Предлагать отправить в Twitter")
+    val twitterSetting: String by lazyString("Предлагать отправить в Twitter")
 
     //Chat
-    override val messageTextPlaceHolder: String by lazy { "Текст" }
-    override val copy: String by lazy { "Скопировать" }
-    override val edit: String by lazy { "Изменить" }
-    override val delete by lazy { "Удалить" }
-    override val makeSecret: String by lazy { "Спрятать" }
-    override val revealMessage: String by lazy { "Открыть" }
-    override val sendToTwitter: String by lazyString("Отправить в Twitter")
+    val messageTextPlaceHolder: String by lazy { "Текст" }
+    val copy: String by lazy { "Скопировать" }
+    val edit: String by lazy { "Изменить" }
+    val delete by lazy { "Удалить" }
+    val makeSecret: String by lazy { "Спрятать" }
+    val revealMessage: String by lazy { "Открыть" }
+    val sendToTwitter: String by lazyString("Отправить в Twitter")
 
-    override fun mapThemeName(theme: ThemeType): String {
+    fun mapThemeName(theme: ThemeType): String {
         return when (theme) {
             ThemeType.Dark -> "Темная"
             ThemeType.Light -> "Светлая"

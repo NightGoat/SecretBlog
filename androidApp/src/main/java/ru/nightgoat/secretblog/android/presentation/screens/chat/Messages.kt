@@ -33,7 +33,7 @@ import ru.nightgoat.secretblog.models.BlogMessage
 import ru.nightgoat.secretblog.models.ChatMessagesEditMode
 import ru.nightgoat.secretblog.models.SecretBlogsState
 import ru.nightgoat.secretblog.providers.strings.Dictionary
-import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
+import ru.nightgoat.secretblog.providers.strings.MultiLanguageDictionary
 
 
 private val MESSAGE_TIME_STAMP_TEXT_SIZE = 12.sp
@@ -44,7 +44,7 @@ private val dropDownMinWidth = 128.dp
 @Composable
 fun Messages(
     modifier: Modifier = Modifier,
-    dictionary: Dictionary = EnglishDictionary,
+    dictionary: Dictionary = MultiLanguageDictionary(),
     listState: LazyListState,
     state: AppState,
     onDropDownSelected: (MessagesDropdowns.MessageDropDownSelectables, BlogMessage) -> Unit = { _, _ -> },

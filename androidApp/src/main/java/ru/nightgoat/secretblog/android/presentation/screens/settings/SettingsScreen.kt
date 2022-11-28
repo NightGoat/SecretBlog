@@ -32,7 +32,7 @@ import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.core.action.SettingsAction
 import ru.nightgoat.secretblog.models.ThemeType
 import ru.nightgoat.secretblog.providers.strings.Dictionary
-import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
+import ru.nightgoat.secretblog.providers.strings.MultiLanguageDictionary
 
 @Composable
 fun SettingsScreen(
@@ -128,7 +128,7 @@ private fun MainContent(
             isPinCodeSet = true, isPinOnSecretVisibilitySet = true
         )
     ),
-    dictionary: Dictionary = EnglishDictionary,
+    dictionary: Dictionary = MultiLanguageDictionary(),
     onBackPressed: () -> Unit = {},
     onPinOnLoginCheck: (Boolean) -> Unit = {},
     onPinSecretVisibilityCheck: (Boolean) -> Unit = {},

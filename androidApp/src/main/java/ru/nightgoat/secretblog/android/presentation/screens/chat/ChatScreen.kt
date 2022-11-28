@@ -32,7 +32,7 @@ import ru.nightgoat.secretblog.models.BlogMessage
 import ru.nightgoat.secretblog.models.ChatMessagesEditMode
 import ru.nightgoat.secretblog.models.SecretBlogsState
 import ru.nightgoat.secretblog.providers.strings.Dictionary
-import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
+import ru.nightgoat.secretblog.providers.strings.MultiLanguageDictionary
 
 private val TOOLBAR_TEXT_SIZE = 20.sp
 
@@ -134,7 +134,7 @@ private fun handleDropDownAction(
 private fun ChatMainContent(
     state: AppState = AppState(),
     listState: LazyListState = LazyListState(),
-    dictionary: Dictionary = EnglishDictionary,
+    dictionary: Dictionary = MultiLanguageDictionary(),
     onSendMessageClick: (String, Boolean) -> Unit = { _, _ -> },
     onShowHideButtonClick: () -> Unit = {},
     onMessageSelect: (BlogMessage, Boolean) -> Unit = { _, _ -> },
@@ -182,7 +182,7 @@ private fun ChatMainContent(
 @Composable
 private fun Toolbar(
     state: AppState,
-    dictionary: Dictionary = EnglishDictionary,
+    dictionary: Dictionary = MultiLanguageDictionary(),
     onDeleteMessagesClick: () -> Unit,
     onShowHideButtonClick: () -> Unit,
     onCancelSelectionClick: () -> Unit,

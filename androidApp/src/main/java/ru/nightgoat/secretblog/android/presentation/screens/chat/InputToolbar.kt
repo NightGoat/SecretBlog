@@ -22,7 +22,7 @@ import ru.nightgoat.secretblog.models.BlogMessage
 import ru.nightgoat.secretblog.models.ChatMessagesEditMode
 import ru.nightgoat.secretblog.models.orEmpty
 import ru.nightgoat.secretblog.providers.strings.Dictionary
-import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
+import ru.nightgoat.secretblog.providers.strings.MultiLanguageDictionary
 
 
 private const val TEXT_INPUT_MAX_LINES = 5
@@ -106,6 +106,6 @@ fun InputToolbar(
 @Composable
 private fun InputToolbarPreview() {
     BlogTheme {
-        InputToolbar(dictionary = EnglishDictionary, onSendMessageClick = { _, _ -> })
+        InputToolbar(dictionary = MultiLanguageDictionary(), onSendMessageClick = { _, _ -> })
     }
 }

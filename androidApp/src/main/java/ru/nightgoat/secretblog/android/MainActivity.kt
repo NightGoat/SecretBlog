@@ -6,9 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -43,8 +41,8 @@ class MainActivity : AppCompatActivity() {
         Napier.d {
             "App start"
         }
-        val dictionary = StringProvider().provide()
         setContent {
+            val dictionary by remember { mutableStateOf(StringProvider().provide()) }
             val navController = rememberNavController()
             val context = LocalContext.current
             val state by viewModel.observeState().collectAsState()

@@ -27,7 +27,7 @@ import ru.nightgoat.secretblog.core.StoreViewModel
 import ru.nightgoat.secretblog.core.action.GlobalAction
 import ru.nightgoat.secretblog.core.action.PinCodeAction
 import ru.nightgoat.secretblog.providers.strings.Dictionary
-import ru.nightgoat.secretblog.providers.strings.EnglishDictionary
+import ru.nightgoat.secretblog.providers.strings.MultiLanguageDictionary
 
 const val PIN_MAX_LENGTH = 4
 private val cannotRememberPinButtonTextSize = 18.sp
@@ -218,7 +218,7 @@ private fun PincodePreview() {
     BlogTheme {
         PinMainContent(
             state = AppState(),
-            dictionary = EnglishDictionary,
+            dictionary = MultiLanguageDictionary(),
             pincode = "1",
             pincodeScreenState = Screen.PinCode.State.CHECK_ON_LOGIN
         )
