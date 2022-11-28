@@ -92,6 +92,9 @@ fun SettingsScreen(
         onThemeSelect = { index, _ ->
             val name = ThemeType.values()[index]
             viewModel.dispatch(SettingsAction.SelectTheme(name))
+        },
+        onTwitterFeatureButton = { isChecked ->
+            viewModel.dispatch(SettingsAction.ChangeSettingsTwitterButton(isChecked))
         }
     )
 }
@@ -131,6 +134,7 @@ private fun MainContent(
     onPinSecretVisibilityCheck: (Boolean) -> Unit = {},
     onPinSettingsCheck: (Boolean) -> Unit = {},
     onDeleteAllMessagesButton: () -> Unit = {},
+    onTwitterFeatureButton: (Boolean) -> Unit = {},
     onThemeSelect: (Int, String) -> Unit = { _, _ -> }
 ) {
     Column(
@@ -146,6 +150,7 @@ private fun MainContent(
             onPinSecretVisibilityCheck = onPinSecretVisibilityCheck,
             onPinSettingsCheck = onPinSettingsCheck,
             onDeleteAllMessagesButton = onDeleteAllMessagesButton,
+            onTwitterFeatureButton = onTwitterFeatureButton,
             onThemeSelect = onThemeSelect
         )
     }
@@ -159,6 +164,7 @@ private fun Settings(
     onPinSecretVisibilityCheck: (Boolean) -> Unit,
     onPinSettingsCheck: (Boolean) -> Unit,
     onDeleteAllMessagesButton: () -> Unit,
+    onTwitterFeatureButton: (Boolean) -> Unit,
     onThemeSelect: (Int, String) -> Unit
 ) {
     Column(
@@ -183,6 +189,11 @@ private fun Settings(
                 )
             }
         }
+        SettingsSwitch(
+            text = dictionary.twitterSetting,
+            isChecked = state.settings.isSendToTwitterFeatureOn,
+            onClick = onTwitterFeatureButton
+        )
         SettingsDropdown(
             text = dictionary.theme,
             initialSelection = dictionary.mapThemeName(state.settings.themeType),

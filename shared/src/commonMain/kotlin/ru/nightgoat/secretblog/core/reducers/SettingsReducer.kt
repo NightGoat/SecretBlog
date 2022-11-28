@@ -41,6 +41,13 @@ fun StoreViewModel.settingsReducer(
                 isPinOnSettingsSet = isSet
             )
         }
+        is SettingsAction.ChangeSettingsTwitterButton -> {
+            val isSet = action.isChecked
+            settingsProvider.isSendToTwitterFeatureOn = isSet
+            state.value = oldState.changeSettings(
+                isTwitterFeatureOn = isSet
+            )
+        }
     }
 
 }

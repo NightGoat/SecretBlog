@@ -11,6 +11,7 @@ class SettingsProvider {
             isPinCodeSet = isPinCodeSet,
             isPinOnSecretVisibilitySet = isPinOnSecretVisibilitySet,
             isPinOnSettingsSet = isPinOnSettingsSet,
+            isSendToTwitterFeatureOn = isSendToTwitterFeatureOn,
             themeType = ThemeType.getFromOrdinal(selectedTheme)
         )
 
@@ -18,6 +19,7 @@ class SettingsProvider {
     var isPinCodeSet: Boolean by kvault.booleanPref()
     var isPinOnSecretVisibilitySet: Boolean by kvault.booleanPref()
     var isPinOnSettingsSet: Boolean by kvault.booleanPref()
+    var isSendToTwitterFeatureOn: Boolean by kvault.booleanPref()
     var selectedTheme: Int by kvault.intPref()
 
     fun setNewPincode(newPincode: String) {

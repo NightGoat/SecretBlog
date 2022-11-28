@@ -13,4 +13,5 @@ sealed class GlobalAction : Action {
     object AppPaused : GlobalAction()
     object AppResumed : GlobalAction()
     object ClearApp : GlobalAction()
+    object Empty : GlobalAction()
 }

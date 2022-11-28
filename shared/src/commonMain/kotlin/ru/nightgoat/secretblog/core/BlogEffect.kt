@@ -22,6 +22,10 @@ sealed class BlogEffect : Effect {
         val text: String
     ) : BlogEffect()
 
+    data class Twitter(
+        val text: String
+    ) : BlogEffect()
+
     data class Navigate(
         val route: String,
         val argument: String? = null,

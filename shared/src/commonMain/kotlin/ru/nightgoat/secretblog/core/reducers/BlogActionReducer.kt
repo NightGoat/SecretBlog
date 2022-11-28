@@ -105,6 +105,9 @@ fun StoreViewModel.blogActionReducer(action: BlogAction, oldState: AppState) {
                 state.value = oldState.updateMessage(message)
             }
         }
+        is BlogAction.Twit -> {
+            reduceSideEffect(BlogEffect.Twitter(action.message.text))
+        }
     }
 }
 

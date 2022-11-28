@@ -123,6 +123,9 @@ private fun handleDropDownAction(
                 changeStateTo = SecretBlogsState.VISIBLE
             )
         }
+        is MessagesDropdowns.MessageDropDownSelectables.Twit -> {
+            BlogAction.Twit(message)
+        }
     }
     viewModel.dispatch(action = action)
 }

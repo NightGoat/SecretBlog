@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -24,6 +23,8 @@ import ru.nightgoat.secretblog.android.presentation.screens.SplashScreen
 import ru.nightgoat.secretblog.android.presentation.screens.chat.ChatScreen
 import ru.nightgoat.secretblog.android.presentation.screens.pincode.PinCodeScreen
 import ru.nightgoat.secretblog.android.presentation.screens.settings.SettingsScreen
+import ru.nightgoat.secretblog.android.presentation.util.Twitter
+import ru.nightgoat.secretblog.android.presentation.util.launch
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.core.BlogEffect
 import ru.nightgoat.secretblog.core.Screen
@@ -50,12 +51,12 @@ class MainActivity : AppCompatActivity() {
             val effects by viewModel.observeSideEffect().collectAsState(initial = BlogEffect.Empty)
             when (effects) {
                 is BlogEffect.LogOut -> {
-                    LaunchedEffect(effects) {
+                    effects.launch {
                         navController.navigate(Screen.PinCode.routeWithCheck)
                     }
                 }
                 is BlogEffect.Navigate -> {
-                    LaunchedEffect(effects) {
+                    effects.launch {
                         val effect = effects as BlogEffect.Navigate
                         var route = effect.route
                         val argument = effect.argument
@@ -70,12 +71,12 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 is BlogEffect.NavigateBack -> {
-                    LaunchedEffect(effects) {
+                    effects.launch {
                         navController.popBackStack()
                     }
                 }
                 is BlogEffect.Toast -> {
-                    LaunchedEffect(effects) {
+                    effects.launch {
                         Toast.makeText(
                             context,
                             (effects as BlogEffect.Toast).text,
@@ -84,12 +85,19 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 is BlogEffect.ClearBackStackAndGoToChat -> {
-                    LaunchedEffect(effects) {
+                    effects.launch {
                         navController.navigate(Screen.Chat.route) {
                             popUpTo(Screen.Splash.route) {
                                 inclusive = true
                             }
                         }
+                    }
+                }
+                is BlogEffect.Twitter -> {
+                    effects.launch {
+                        val effect = effects as BlogEffect.Twitter
+                        val intent = Twitter.getIntent(context, effect.text)
+                        startActivity(intent)
                     }
                 }
             }

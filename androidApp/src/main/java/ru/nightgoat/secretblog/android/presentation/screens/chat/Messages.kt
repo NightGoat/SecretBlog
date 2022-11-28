@@ -27,6 +27,7 @@ import ru.nightgoat.secretblog.android.presentation.AppColor
 import ru.nightgoat.secretblog.android.presentation.BlogTheme
 import ru.nightgoat.secretblog.android.presentation.composables.SimpleSpacer
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
+import ru.nightgoat.secretblog.android.presentation.dropdownIconSize
 import ru.nightgoat.secretblog.core.AppState
 import ru.nightgoat.secretblog.models.BlogMessage
 import ru.nightgoat.secretblog.models.ChatMessagesEditMode
@@ -108,7 +109,10 @@ fun Messages(
                     onDissmisDropDown = {
                         isExpanded = !isExpanded
                     },
-                    dropdowns = dropdowns.list(message),
+                    dropdowns = dropdowns.list(
+                        message = message,
+                        isTwitterButtonEnabled = state.settings.isSendToTwitterFeatureOn
+                    ),
                     onDropDownSelected = onDropDownSelected,
                     onLongPress = onLongPress,
                     onMessageSelect = { message, isSelected ->
@@ -188,7 +192,9 @@ private fun MessageCard(
                         modifier = Modifier.defaultMinSize(minWidth = dropDownMinWidth)
                     ) {
                         Image(
-                            modifier = Modifier.padding(end = defaultPadding),
+                            modifier = Modifier
+                                .size(dropdownIconSize)
+                                .padding(end = defaultPadding),
                             painter = painterResource(id = selection.iconId),
                             contentDescription = selection.title
                         )

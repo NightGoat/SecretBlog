@@ -31,6 +31,7 @@ object RussianDictionary : Dictionary {
     override val theme: String by lazy {
         "Тема"
     }
+    override val twitterSetting: String by lazyString("Предлагать отправить в Twitter")
 
     //Chat
     override val messageTextPlaceHolder: String by lazy { "Текст" }
@@ -39,6 +40,7 @@ object RussianDictionary : Dictionary {
     override val delete by lazy { "Удалить" }
     override val makeSecret: String by lazy { "Спрятать" }
     override val revealMessage: String by lazy { "Открыть" }
+    override val sendToTwitter: String by lazyString("Отправить в Twitter")
 
     override fun mapThemeName(theme: ThemeType): String {
         return when (theme) {

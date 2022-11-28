@@ -6,3 +6,4 @@ val defaultPadding = 8.dp
 val bigPadding = 16.dp
 val defaultElevation = 4.dp
 val defaultCornerRadius = 4.dp
+val dropdownIconSize = 24.dp

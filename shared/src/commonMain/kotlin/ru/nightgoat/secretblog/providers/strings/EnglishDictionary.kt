@@ -31,6 +31,7 @@ object EnglishDictionary : Dictionary {
     override val theme: String by lazy {
         "Theme"
     }
+    override val twitterSetting: String by lazyString("Send to Twitter action")
 
     //Chat
     override val messageTextPlaceHolder: String by lazy { "Message" }
@@ -39,6 +40,7 @@ object EnglishDictionary : Dictionary {
     override val delete by lazy { "Delete" }
     override val makeSecret: String by lazy { "Make secret" }
     override val revealMessage: String by lazy { "Reveal" }
+    override val sendToTwitter: String by lazyString("Send to Twitter")
 
     override fun mapThemeName(theme: ThemeType): String {
         return theme.name

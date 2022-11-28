@@ -10,4 +10,5 @@ sealed class SettingsAction : Action {
     object TurnOffOnSecretVisibilityPin : SettingsAction()
     data class ChangeSettingsPinCheck(val isChecked: Boolean) : SettingsAction()
     data class SelectTheme(val themeName: ThemeType) : SettingsAction()
+    data class ChangeSettingsTwitterButton(val isChecked: Boolean) : SettingsAction()
 }

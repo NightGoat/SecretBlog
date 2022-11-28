@@ -23,6 +23,8 @@ sealed class BlogAction : Action {
     object OpenSettingsScreen : BlogAction()
     data class ChangeSecretState(val message: BlogMessage, val changeStateTo: SecretBlogsState) :
         BlogAction()
+
+    data class Twit(val message: BlogMessage) : BlogAction()
 }
 
 sealed class RefreshAction {

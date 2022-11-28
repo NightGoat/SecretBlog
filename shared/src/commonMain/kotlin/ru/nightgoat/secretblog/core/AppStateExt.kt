@@ -30,13 +30,15 @@ fun AppState.changeSettings(
     isPinCodeSet: Boolean = this.settings.isPinCodeSet,
     isPinOnSecretVisibilitySet: Boolean = this.settings.isPinOnSecretVisibilitySet,
     isPinOnSettingsSet: Boolean = this.settings.isPinOnSettingsSet,
+    isTwitterFeatureOn: Boolean = this.settings.isSendToTwitterFeatureOn,
     themeType: ThemeType = this.settings.themeType
 ) = this.copy(
     settings = this.settings.copy(
         isPinCodeSet = isPinCodeSet,
         isPinOnSecretVisibilitySet = isPinOnSecretVisibilitySet,
         isPinOnSettingsSet = isPinOnSettingsSet,
-        themeType = themeType
+        themeType = themeType,
+        isSendToTwitterFeatureOn = isTwitterFeatureOn
     )
 )
 

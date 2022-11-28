@@ -25,6 +25,7 @@ interface Dictionary {
     val deleteAllMessages: String
     val deleteAllMessagesAlertTitle: String
     val deleteAllMessagesAlertMessage: String
+    val twitterSetting: String
     val theme: String
 
     //Chat
@@ -34,6 +35,8 @@ interface Dictionary {
     val delete: String
     val makeSecret: String
     val revealMessage: String
+    val sendToTwitter: String
 
     fun mapThemeName(theme: ThemeType): String
+    fun lazyString(string: String): Lazy<String> = lazy { string }
 }
