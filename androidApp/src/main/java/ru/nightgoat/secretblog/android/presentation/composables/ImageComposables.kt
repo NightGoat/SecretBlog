@@ -4,12 +4,14 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import ru.nightgoat.secretblog.android.presentation.appIconSize
 import ru.nightgoat.secretblog.android.presentation.defaultPadding
 
 @Composable
@@ -22,6 +24,7 @@ fun AppIcon(
 ) {
     Image(
         modifier = Modifier
+            .size(appIconSize)
             .clickable(onClick = onClick)
             .padding(defaultPadding)
             .then(modifier),
